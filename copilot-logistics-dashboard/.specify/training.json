@@ -1,0 +1,9 @@
+{
+  "specify_cli_version": "1.3.2",
+  "integration": "copilot",
+  "layout": "skills",
+  "feature_directory": "specs/001-carrier-dashboard",
+  "checkpoint": "instructor-completed-reference",
+  "prepared_on": "2026-11-09",
+  "provenance": "Official CLI initialized; feature artifacts prepared from confirmed training requirements using installed skill templates. Not a recording of a live Copilot session."
+}

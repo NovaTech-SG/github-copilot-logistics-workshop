@@ -1,0 +1,9 @@
+[project]
+name = "shipment-tracker"
+version = "0.1.0"
+description = "Local shipment exception follow-up workshop with read-only Databricks MCP"
+requires-python = ">=3.12,<3.13"
+dependencies = ["mcp>=1.28,<2", "httpx>=0.28,<1", "json5>=0.12,<1"]
+
+[tool.uv]
+package = false

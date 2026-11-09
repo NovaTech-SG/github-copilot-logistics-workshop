@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>物流运营看板</title><link rel="icon" href="data:,"><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<header><div class="brand"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M4 23V7h11v16h11V7" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="4" cy="23" r="3" fill="currentColor"/><circle cx="26" cy="7" r="3" fill="currentColor"/></svg><div>GC LOGISTICS<small>物流运营 · 培训演示</small></div></div><span class="synthetic">模拟数据，非真实运营记录</span></header>
+<main id="main">
+  <div class="title-row"><div><p class="eyebrow">运输表现 / 运营分析</p><h1>物流运营看板</h1><p class="subtitle">从运输表现定位需要跟进的承运商</p></div><div class="source"><strong>Databricks MCP</strong><span id="updated">等待首次查询</span></div></div>
+  <section class="filters" aria-label="分析范围"><div class="scope"><span class="dot"></span><span>当前范围</span><strong id="scope">全部承运商</strong></div><div class="controls"><label for="carrier">承运商</label><select id="carrier"><option value="">全部承运商</option></select><button id="clear" type="button">清除筛选</button><button id="refresh" class="accent" type="button">重新查询</button></div></section>
+  <p id="loading" role="status" aria-live="polite"><span class="spinner"></span>正在查询 Databricks，请稍候…</p>
+  <section id="error" role="alert" hidden><h2>暂时无法读取数据</h2><p id="error-message"></p><button id="retry" type="button">重新查询</button></section>
+  <div id="results" hidden>
+    <section class="metrics" aria-label="核心指标">
+      <article><span>运输单量</span><strong id="total">—</strong><small>当前范围内全部运输单</small></article>
+      <article><span>有效计算单量</span><strong id="eligible">—</strong><small>已送达且到达时间完整</small></article>
+      <article class="featured"><span>准时率</span><strong id="rate">—</strong><small id="rate-note">—</small></article>
+      <article><span>延误单量</span><strong id="delayed">—</strong><small>实际到达晚于计划</small></article>
+    </section>
+    <section class="method" aria-label="计算口径"><p><strong>准时率口径</strong>实际到达不晚于计划，等于计划也计为准时</p><div><span>准时 <b id="on-time">—</b></span><span class="slash">/</span><span>有效 <b id="denominator">—</b></span><span class="excluded">排除 <b id="excluded">—</b> 单</span></div></section>
+    <div class="charts">
+      <section class="panel"><div class="panel-heading"><div><h2>承运商准时率</h2><p>准时量 / 有效计算单量</p></div><span>单位：%</span></div><div id="carrier-chart" aria-label="承运商准时率图"></div></section>
+      <section class="panel"><div class="panel-heading"><div><h2>每日运输单量</h2><p>按业务日期统计，无记录日期补零</p></div><span>单位：单</span></div><div id="trend-chart" aria-label="每日运输单量趋势"></div></section>
+    </div>
+    <section class="panel details"><div class="panel-heading"><div><h2>运输明细</h2><p id="detail-note">—</p></div><span id="detail-total">—</span></div><div class="table-wrap"><table><thead><tr><th>运输单号</th><th>承运商</th><th>业务日期</th><th>线路</th><th>计划到达</th><th>实际到达</th><th>运输结果</th></tr></thead><tbody id="rows"></tbody></table></div><div class="pagination"><span id="page-info"></span><div><button id="previous" type="button">上一页</button><button id="next" type="button">下一页</button></div></div></section>
+    <div class="data-note"><span id="snapshot">—</span><span id="query-note">—</span></div>
+  </div>
+  <footer>教学指标口径 · 时间显示为 Asia/Shanghai · 无有效分母时准时率显示 N/A</footer>
+</main>
+</body>
+</html>

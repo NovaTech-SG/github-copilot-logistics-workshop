@@ -1,0 +1,23 @@
+# Local environments and credentials
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+data/
+*.sqlite
+*.sqlite3
+*.sqlite3-shm
+*.sqlite3-wal
+output/
+.playwright-cli/
+*.log
+Thumbs.db
+.DS_Store
+~$*
+
+# Slides are kept outside this code repository.
+/slides/
+*.pptx
+*.ppt
