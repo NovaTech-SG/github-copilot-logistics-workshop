@@ -23,7 +23,7 @@ Nike GC Logistics · Session 2 · 90 分钟
 克隆课程公开仓库后，先选择第一个学员项目：
 
 ```powershell
-$GitHubOwner = 'YanZhiwei'
+$GitHubOwner = 'NovaTech-SG'
 git clone "https://github.com/$GitHubOwner/github-copilot-logistics-workshop.git"
 cd github-copilot-logistics-workshop/copilot-logistics-dashboard-starter
 uv python install 3.12

@@ -39,7 +39,7 @@ Python 由下一步的 uv 安装，无需先配全局 Python、激活虚拟环�
 下方命令使用本课程的公开仓库；使用 ZIP 时直接进入解压后的本案例目录目录，跳过 clone 和 cd。不要在工作坊根目录执行依赖安装。
 
 ```powershell
-$GitHubOwner = 'YanZhiwei'
+$GitHubOwner = 'NovaTech-SG'
 git clone "https://github.com/$GitHubOwner/github-copilot-logistics-workshop.git"
 cd github-copilot-logistics-workshop/copilot-logistics-dashboard-starter
 

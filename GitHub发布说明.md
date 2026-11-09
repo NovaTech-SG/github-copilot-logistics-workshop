@@ -1,50 +1,51 @@
-# 发布一个 GitHub 仓库
+# GitHub 仓库维护与发布
 
-发布目标名称：`github-copilot-logistics-workshop`。发布内容为四个案例代码和跟练文档，PPT 在仓库外单独保存。在此目录根部执行命令。
-公开仓库地址：https://github.com/YanZhiwei/github-copilot-logistics-workshop
+公开仓库：[NovaTech-SG/github-copilot-logistics-workshop](https://github.com/NovaTech-SG/github-copilot-logistics-workshop)
 
-以下保留首次发布步骤，后续更新使用文末命令。
+本仓库包含四个案例代码和跟练文档，PPT 在仓库外单独保存。
+四个应用是普通子目录，每个应用独立管理依赖、规格与练习数据。
 
-## 首次提交
+## 克隆仓库
+
+```powershell
+git clone https://github.com/NovaTech-SG/github-copilot-logistics-workshop.git
+cd github-copilot-logistics-workshop
+```
+
+准备环境和运行案例时，进入选定应用目录，按其 README 执行。
+
+## 更新已有本地副本的 remote
+
+如果本地副本使用转移前的地址，在仓库根目录执行：
+
+```powershell
+git remote set-url origin https://github.com/NovaTech-SG/github-copilot-logistics-workshop.git
+git remote -v
+git fetch origin
+```
+
+## 提交后续更新
+
+在有仓库写权限的账号下操作；先检查自己的改动范围，再暂存和提交。
 
 ```powershell
 git status --short
+git diff
 git add .
 git diff --cached --stat
-git commit -m "Initial logistics Copilot workshop"
-```
-
-## GitHub 上尚未创建目标仓库
-
-```powershell
-gh auth status
-gh repo create github-copilot-logistics-workshop --public --source . --remote origin --push
-gh repo view --web
-```
-
-这会在当前 gh 登录账号下创建公开仓库并上传。发布到组织时使用 `组织名/github-copilot-logistics-workshop`。
-
-## 已在 GitHub 创建了空仓库
-
-不要再运行 repo create。将下面地址替换成目标仓库地址：
-
-```powershell
-git remote add origin https://github.com/YanZhiwei/github-copilot-logistics-workshop.git
-git push -u origin main
-```
-
-如果远端已经有 README 或其他提交，先读取远端历史并处理合并，不要 force push。
-上传后在 Actions 查看四个矩阵任务。远程 CI、本机页面和实际 MCP 分别验收。
-
-当前目录内四个应用都是普通文件夹，没有嵌套 Git 仓库，也不需要 Git submodule。
-原四个独立仓库及其提交保留在原交付目录中。
-
-## 后续更新
-
-```powershell
-git status --short
-git add .
-git diff --cached --stat
+git diff --cached --check
 git commit -m "Update workshop materials"
 git push
 ```
+
+也可按团队约定推送功能分支并创建 PR。不要强制覆盖远端历史。
+
+## 检查仓库与 CI
+
+```powershell
+gh repo view NovaTech-SG/github-copilot-logistics-workshop --json nameWithOwner,url,visibility
+gh run list --repo NovaTech-SG/github-copilot-logistics-workshop --limit 5
+```
+
+根目录 Workshop CI 分四个矩阵任务运行离线检查，不使用 Databricks 凭据，也不部署服务器。
+远程 CI、本机页面和实际 MCP 查询需要分别验收。实际 Token、本地数据库、虚拟环境和 PPT 均不提交。
