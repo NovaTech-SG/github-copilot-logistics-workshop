@@ -4,7 +4,6 @@
     {
       "id": "dbxHost",
       "type": "promptString",
-      // 首次输入后本窗口内会记住；不要把它写成固定值，避免把工作区地址提交进仓库
       "description": "Databricks 工作区地址（https://...，不带末尾斜杠）"
     },
     {
@@ -16,8 +15,9 @@
   ],
   "configurations": [
     {
-      // 常驻服务，调试页面请求时用这个。停在断点后浏览器那个请求会挂起，继续后恢复。
-      "name": "看板：启动网页（127.0.0.1:8766）",
+      // 默认：Host / Token / Catalog 全部从项目根目录的 .env 读取，F5 不再弹输入框。
+      // .env 已被 .gitignore 忽略；没有这个文件时用下面“提示输入”那份配置。
+      "name": "看板：启动网页（读 .env，127.0.0.1:8766）",
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/app.py",
@@ -25,22 +25,29 @@
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "stopOnEntry": false,
-      // 只调自己的代码；想单步进 httpx / mcp 库内部就改成 false
       "justMyCode": true,
-      "env": {
-        "DATABRICKS_HOST": "${input:dbxHost}",
-        "DATABRICKS_TOKEN": "${input:dbxToken}",
-        "DATABRICKS_CATALOG": "dev_databricks",
-        "DATABRICKS_SCHEMA": "default"
-      }
+      "envFile": "${workspaceFolder}/.env"
     },
     {
-      // 查一次就退出，适合快速在 SQL/校验逻辑上打断点。
-      "name": "看板：检查数据（--check，一次性）",
+      // 查一次就退出，适合在 SQL / 校验逻辑上打断点。
+      "name": "看板：检查数据（读 .env，--check）",
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/app.py",
       "args": ["--check"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "stopOnEntry": false,
+      "justMyCode": true,
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      // 兜底：没有 .env，或想临时连别的工作区时用；会提示输入 Host 和 Token。
+      "name": "看板：启动网页（提示输入 Host + Token）",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/app.py",
+      "args": ["--port", "8766"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "stopOnEntry": false,
