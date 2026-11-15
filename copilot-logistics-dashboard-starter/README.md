@@ -94,7 +94,7 @@ try {
 }
 ```
 
-`DATABRICKS_HOST` 是给 Python 应用的完整地址；`DATABRICKS_HOSTNAME` 只供 `.vscode/mcp.json`，因为该文件的 `url` 必须以字面的 `https://` 开头，把完整地址放进变量会触发"URL 必须以 http:// 或 https:// 开头"的提示。`DATABRICKS_MCP_URL` 可选，用于覆盖应用默认拼接的端点。Catalog/Schema 换成培训实际位置。隐藏输入避免 Token 出现在命令文本中；应用仍需在本机进程内使用 Token。不要把凭据写入 README、聊天、前端或 Git。本项目不自动加载 `.env`。
+`DATABRICKS_HOST` 是给 Python 应用的完整地址；`DATABRICKS_HOSTNAME` 只供 `.vscode/mcp.json`，因为该文件的 `url` 必须以字面的 `https://` 开头，把完整地址放进变量会触发“URL 必须以 http:// 或 https:// 开头”的提示。`DATABRICKS_MCP_URL` 可选，用于覆盖应用默认拼接的端点。Catalog/Schema 换成培训实际位置。隐藏输入避免 Token 出现在命令文本中；应用仍需在本机进程内使用 Token。不要把凭据写入 README、聊天、前端或 Git。本项目不自动加载 `.env`。
 
 环境变量只对当前终端及其后启动的子进程生效。Python 命令可以直接在本窗口运行；如需 VS Code 继承这些变量，保存工作后完全退出已有 VS Code 进程，再从此窗口打开仓库：
 

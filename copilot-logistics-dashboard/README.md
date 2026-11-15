@@ -92,7 +92,7 @@ try {
 }
 ```
 
-`DATABRICKS_HOST` 是给 Python 应用的完整地址；`DATABRICKS_HOSTNAME` 只供 `.vscode/mcp.json`，因为该文件的 `url` 必须以字面的 `https://` 开头，把完整地址放进变量会触发"URL 必须以 http:// 或 https:// 开头"的提示。`DATABRICKS_MCP_URL` 可选，用于覆盖应用默认拼接的端点。Catalog/Schema 换成培训实际位置。隐藏输入避免 Token 出现在命令文本中；应用仍需在本机进程内使用 Token。不要把凭据写入 README、聊天、前端或 Git。本项目不自动加载 `.env`。
+`DATABRICKS_HOST` 是给 Python 应用的完整地址；`DATABRICKS_HOSTNAME` 只供 `.vscode/mcp.json`，因为该文件的 `url` 必须以字面的 `https://` 开头，把完整地址放进变量会触发“URL 必须以 http:// 或 https:// 开头”的提示。`DATABRICKS_MCP_URL` 可选，用于覆盖应用默认拼接的端点。Catalog/Schema 换成培训实际位置。隐藏输入避免 Token 出现在命令文本中；应用仍需在本机进程内使用 Token。不要把凭据写入 README、聊天、前端或 Git。应用进程本身不自动加载 `.env`；仅第 4 节的 F5 配置会通过 `envFile` 注入。
 
 环境变量只对当前终端及其后启动的子进程生效。Python 命令可以直接在本窗口运行；如需 VS Code 继承这些变量，保存工作后完全退出已有 VS Code 进程，再从此窗口打开仓库：
 
@@ -169,7 +169,35 @@ uv run --locked python app.py
 
 `--check` 会实际查询 Dashboard 业务并输出 `summary`、当前页 `rows` 和来源信息。未筛选的培训快照应为总量 500、有效分母 380、准时 304、延误 76、准时率 80.00%；`rows` 是当前页条数，不是总量。网页应显示指标、承运商筛选、对比图、趋势及分页明细。
 
-另一个便捷入口是 `.\start.ps1`：先设置 Host/Catalog/Schema，它会同步依赖并在缺少 Token 时隐藏提示输入；或者用 `.\start.ps1 -UseVSCodeConfig` 复用默认用户配置。两种入口不要混用配置来源；第 3.4 节的显式命令更适合排查路径问题。
+### 在 VS Code 中运行或调试（可选）
+
+仓库带了 `.vscode/launch.json`，可以不开终端直接按 F5。先复制模板并填自己的值：
+
+```powershell
+Copy-Item .env.example .env
+```
+
+`.env` 已被 `.gitignore` 忽略。`DATABRICKS_TOKEN` 可以填在这个文件里，也可以把该行注释掉、改在启动 VS Code 的终端里设置 `$env:DATABRICKS_TOKEN`——注意**留空会覆盖**终端里的同名变量。
+
+| 配置 | 行为 |
+|---|---|
+| 看板：启动网页（读 .env，127.0.0.1:8766） | 常驻服务，F5 后打开 <http://127.0.0.1:8766> |
+| 看板：检查数据（读 .env，--check） | 查一次、打印指标、退出 |
+| 看板：启动网页（提示输入 Host + Token） | 没有 `.env` 时的兜底，弹框输入 |
+
+在行号左侧点一下即可打断点。请求进入后停在断点上，此时**浏览器会一直转圈**（该请求线程被挂起），按 F5 继续才返回。改完 Python 代码要 Shift+F5 停止再启动，没有热重载。
+
+编辑器右上角的 ▷「Run Python File」**不走** `launch.json`，拿不到环境变量，会报 URL 或 Token 相关错误；请用 F5，或在左侧「运行和调试」面板选择上面的配置。
+
+启动方式汇总，选一个即可，不要混用凭据来源：
+
+| 入口 | 凭据来源 | 适用场景 |
+|---|---|---|
+| `uv run --locked python app.py` | 当前终端的环境变量 | 命令行操作、排查配置路径 |
+| `.\start.ps1` | 自动同步依赖；缺 Token 时隐藏输入，或加 `-UseVSCodeConfig` 复用默认用户配置 | 干净的一键启动 |
+| F5（`.vscode/launch.json`） | `.env`，或弹框输入 | 需要打断点调试 |
+
+第 3.4 节的显式 `--vscode-config` 命令更适合核对配置路径与来源。
 
 
 ## 5. 使用 Spec Kit 复盘
@@ -251,7 +279,10 @@ uv run --locked python tools/verify_live.py
 | `feature.json` 不存在 | 运行 `uv run --locked python tools/bootstrap_training.py`；它恢复当前课堂功能，不覆盖有效选择 |
 | `check_training.py` 不通过 | 先看报错中的文件或功能目录。它检查本课堂预置结构和范围；主动切换了其他功能时，不能据此判断新功能有问题 |
 | `/speckit-*` 不显示 | 确认只打开本案例目录、当前会话支持 `.github/skills`、Copilot 可用且组织允许；重载窗口并检查 IDE 的技能发现能力。不要重跑 init 覆盖材料 |
-| 缺少 Token 或提示未展开变量 | 核对运行应用的终端是否已设环境变量；`${input:...}` 只能由 IDE 处理，Python 不支持。项目不会自动读 `.env` |
+| 缺少 Token 或提示未展开变量 | 应用本身不读 `.env`：终端启动看环境变量，F5 由 `.vscode/launch.json` 的 `envFile` 注入。`${input:...}` 只能由 IDE 展开，Python 不支持 |
+| F5 报“尚未提供 Databricks Token” | `.env` 里 `DATABRICKS_TOKEN=` 是**空值**，会覆盖终端里的同名变量；要么填入 Token，要么把该行注释掉后从终端继承 |
+| `databricksTraining` 无法启动或显示灰点 | 工作区需已信任；VS Code 必须从设好 `DATABRICKS_HOSTNAME` 的终端启动；MCP 服务器不会自动运行，需手动 Start，首次还要确认信任提示 |
+| `mcp.json` 里 `url` 提示“必须以 http:// 或 https:// 开头” | 该字段要求以**字面** `https://` 开头，所以只把域名放进 `DATABRICKS_HOSTNAME`，不要放完整地址 |
 | MCP 返回 401/403 | 检查 Token 过期、工作区、`sql` 作用域、MCP 开放条件与表/计算权限；能列工具不等于能读表 |
 | 弹出 OAuth 客户端注册或 `invalid_request` | 说明当前会话走了交互式 OAuth；它与本文 Bearer Token 路径不同。请讲师核对所选配置和组织认证方式，不把 PAT 填到 OAuth client ID |
 | service 不存在或无权访问 | 确认完整 MCP 地址，勿混用 `/api/2.0/mcp/sql` 与 `system.ai.dbsql`；按实际服务检查启用条件及权限 |
@@ -267,6 +298,9 @@ uv run --locked python tools/verify_live.py
 | 路径 | 用途 |
 |---|---|
 | `app.py` / `start.ps1` | 本地服务、命令行参数与启动脚本 |
+| `.vscode/mcp.json` | MCP 服务器配置；`url` 只放域名变量，避免 schema 误报 |
+| `.vscode/launch.json` | F5 调试配置；通过 `envFile` 读取 `.env` |
+| `.env.example` | 本地凭据模板，复制为 `.env` 后填写；`.env` 不提交 |
 | `services/settings.py` | 环境变量和显式 MCP 配置读取 |
 | `services/mcp_sql.py` | 只读查询、轮询与结果解析 |
 | `services/queries.py` | 业务 SQL |
