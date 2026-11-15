@@ -1,0 +1,64 @@
+{
+  "version": "0.2.0",
+  "inputs": [
+    {
+      "id": "dbxHost",
+      "type": "promptString",
+      "description": "Databricks 工作区地址（https://...，不带末尾斜杠）"
+    },
+    {
+      "id": "dbxToken",
+      "type": "promptString",
+      "description": "Databricks Token（不回显，仅本次进程使用）",
+      "password": true
+    }
+  ],
+  "configurations": [
+    {
+      // 默认：Host / Token / Catalog 全部从项目根目录的 .env 读取，F5 不再弹输入框。
+      // .env 已被 .gitignore 忽略；没有这个文件时用下面“提示输入”那份配置。
+      "name": "异常跟进：启动网页（读 .env，127.0.0.1:8768）",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/app.py",
+      "args": ["--port", "8768"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "stopOnEntry": false,
+      "justMyCode": true,
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      // 查一次就退出：输出异常单量与各状态计数，适合在读取/状态流转逻辑上打断点。
+      "name": "异常跟进：检查数据（读 .env，--check）",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/app.py",
+      "args": ["--check"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "stopOnEntry": false,
+      "justMyCode": true,
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      // 兜底：没有 .env，或想临时连别的工作区时用；会提示输入 Host 和 Token。
+      // 本地 SQLite 默认写到 data/followups.sqlite3，需要换位置时加 "--db", "<路径>"。
+      "name": "异常跟进：启动网页（提示输入 Host + Token）",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/app.py",
+      "args": ["--port", "8768"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "stopOnEntry": false,
+      "justMyCode": true,
+      "env": {
+        "DATABRICKS_HOST": "${input:dbxHost}",
+        "DATABRICKS_TOKEN": "${input:dbxToken}",
+        "DATABRICKS_CATALOG": "dev_databricks",
+        "DATABRICKS_SCHEMA": "default"
+      }
+    }
+  ]
+}
