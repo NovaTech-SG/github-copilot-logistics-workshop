@@ -2,14 +2,50 @@
 
 物流 Dashboard · 讲师完成版，用于 Nike GC Logistics 的 GitHub Copilot Session 2。全部业务数据为培训模拟数据，不代表 Nike 实际运营情况。
 
-**这个仓库用于先看效果、讲师演示和课后复盘。** 学员编码请打开同一工作坊下的 `copilot-logistics-dashboard-starter`。课件中的 `logistics-dashboard` 是本案例简称。完成版直接运行即可，不需要再执行 `/speckit-implement` 改写业务。
+**本仓库用于先看效果、讲师演示和课后复盘。** 学员编码请打开同一工作坊下的 `copilot-logistics-dashboard-starter`；课件中的 `logistics-dashboard` 是本案例简称。
 
-按顺序完成：环境 → 克隆与依赖 → MCP → 本地启动 → Spec Kit 复盘 → 验收。默认地址 **<http://127.0.0.1:8766>**。准备工作请在课前完成，课堂为本案例预留 15 分钟。
+> [!IMPORTANT]
+> 这是完成版，直接运行即可，**不要**再执行 `/speckit-implement` 改写业务。规格、计划与任务留作复盘材料。
 
-没有 Databricks 凭据时，仍可阅读规格、完成依赖安装和离线检查；页面业务数据及保存后重读验收需要实际 MCP 连接。
+## 概览
 
+| 项 | 内容 |
+|---|---|
+| 课程 | GitHub Copilot Session 2 · Nike GC Logistics |
+| 角色 | 讲师完成版（学员版：`copilot-logistics-dashboard-starter`） |
+| 预计用时 | 课前准备约 30 分钟；课堂 15 分钟 |
+| 默认地址 | <http://127.0.0.1:8766> |
+| 数据来源 | Databricks SQL MCP，只读：`execute_sql_read_only` + `poll_sql_result` |
+| 页面内容 | 指标卡、承运商筛选、承运商对比、每日趋势、分页明细 |
 
-## 1. 准备电脑和账号
+推荐顺序：先决条件 → 获取代码与依赖 → 快速开始 → 配置 Databricks MCP → 运行与调试 → Spec Kit 复盘 → 验收。
+
+> [!NOTE]
+> 没有 Databricks 凭据时，仍可阅读规格、完成依赖安装和离线检查；页面业务数据与保存后重读验收需要实际 MCP 连接。
+
+## 学习目标
+
+- [ ] 跑通本地服务，看到 500 / 380 / 304 / 76 / 80.00% 的真实查询结果
+- [ ] 说明准时率的分子、分母与排除规则，以及为什么筛选后指标仍然一致
+- [ ] 分清“Copilot 能查数据”与“应用能查数据”是两条独立连接
+- [ ] 读懂 `spec.md` → `plan.md` → `tasks.md` → 实现之间的对应关系
+- [ ] 用离线检查、MCP 实测、页面验收三类证据区分“看起来完成”与“确实完成”
+
+## 目录
+
+| 章节 | 内容 | 用时 |
+|---|---|---|
+| [1. 先决条件](#1-先决条件) | 工具、账号与网络 | 首次约 10 分钟 |
+| [2. 获取代码与依赖](#2-获取代码与依赖) | 克隆、`uv sync`、课堂功能恢复 | 约 10 分钟 |
+| [3. 快速开始](#3-快速开始) | 三条命令看到页面 | 约 2 分钟 |
+| [4. 配置 Databricks MCP](#4-配置-databricks-mcp) | 数据权限、凭据、Copilot 验证 | 约 10 分钟 |
+| [5. 运行与调试](#5-运行与调试) | 终端、`start.ps1`、F5 断点 | 约 2 分钟 |
+| [6. Spec Kit 复盘](#6-spec-kit-复盘) | 只读解读 spec/plan/tasks | 约 5 分钟 |
+| [7. 验收](#7-验收) | 离线检查与实际业务数值 | 约 8 分钟 |
+| [8. 故障排查](#8-故障排查) | 常见现象与处理 | 按需 |
+| [9. 目录结构与参考](#9-目录结构与参考) | 文件导航与官方链接 | 参考 |
+
+## 1. 先决条件
 
 本文使用 **Windows + PowerShell**。仓库中的 Spec Kit 包装脚本为 `.ps1`，建议在 VS Code 的 PowerShell 终端操作。macOS/Linux 可运行 Python 应用，但本文不提供对应的完整课堂脚本。
 
@@ -22,7 +58,7 @@
 | Databricks 账号及网络 | 能访问讲师指定工作区、SQL MCP 和培训表；具备对应 SQL Warehouse 使用权限 |
 | 网络下载条件 | 首次准备需要下载 Python、PyPI 依赖和固定版本的 Spec Kit CLI；请在课前完成 |
 
-安装工具后重新打开 PowerShell，检查：
+安装工具后重新打开 PowerShell，确认命令可用：
 
 ```powershell
 git --version
@@ -30,11 +66,12 @@ uv --version
 node --version
 ```
 
-Python 由下一步的 uv 安装，无需先配全局 Python、激活虚拟环境或单独安装 pip。无需 Docker、前端构建服务或本机 Databricks。Copilot Agent、MCP 和 Skills 还需组织策略允许使用；只登录 GitHub 不代表这些能力均已开放。
+> [!NOTE]
+> Python 由下一步的 uv 安装，无需先配全局 Python、激活虚拟环境或单独安装 pip。无需 Docker、前端构建服务或本机 Databricks。Copilot Agent、MCP 和 Skills 还需组织策略允许使用；只登录 GitHub 不代表这些能力均已开放。
 
-## 2. 克隆仓库，安装依赖并恢复课堂功能
+## 2. 获取代码与依赖
 
-下方命令使用本课程的公开仓库；使用 ZIP 时直接进入解压后的本案例目录目录，跳过 clone 和 cd。不要在工作坊根目录执行依赖安装。
+下方命令使用本课程的公开仓库；使用 ZIP 时直接进入解压后的本案例目录，跳过 clone 和 cd。不要在工作坊根目录执行依赖安装。
 
 ```powershell
 $GitHubOwner = 'NovaTech-SG'
@@ -48,16 +85,55 @@ uv run --locked python tools/check_training.py
 .\tools\speckit.ps1 integration status --json
 ```
 
-首次 bootstrap 应输出 `restored`，再次运行输出 `preserved`；课堂检查应输出 `ready`；Spec Kit 完整性结果应为 `status: ok`，无缺失或被改写的官方文件。它们均不验证 MCP 或页面业务。
+| 命令 | 预期输出 |
+|---|---|
+| `bootstrap_training.py` | 首次 `restored`，再次运行 `preserved` |
+| `check_training.py` | `ready` |
+| `speckit.ps1 integration status --json` | `status: ok`，无缺失或被改写的官方文件 |
 
-仓库已预装 **官方 Spec Kit 1.3.2** 的 Copilot Skills 和模板。`.\tools\speckit.ps1` 通过 uv 调用固定 CLI，首次可能需要下载；不用额外安装全局 `specify`，也不要重新执行 `specify init --force`。
+这三项都**不验证** MCP 连接或页面业务。
+
+> [!NOTE]
+> 仓库已预装 **官方 Spec Kit 1.3.2** 的 Copilot Skills 和模板。`.\tools\speckit.ps1` 通过 uv 调用固定 CLI，首次可能需要下载；不用额外安装全局 `specify`，也不要重新执行 `specify init --force`。
 
 当前功能为 `specs/001-carrier-dashboard`。Spec Kit 忽略本机活动指针 `.specify/feature.json`，bootstrap 依据已提交的 `.specify/training.json` 恢复它，并保留已有有效选择。`uv sync --locked` 生成本案例目录自己的 `.venv`；后续命令都在本案例目录内运行。
 
+## 3. 快速开始
 
-## 3. 配置 Databricks MCP
+前提：已完成第 1、2 节。以下命令都在本案例目录内执行。
 
-### 3.1 先确认培训数据和权限
+**1）提供凭据**（最小集，来源说明见 [4.2](#42-提供凭据)）
+
+```powershell
+$env:DATABRICKS_HOST     = 'https://你的工作区.azuredatabricks.net'
+$env:DATABRICKS_HOSTNAME = '你的工作区.azuredatabricks.net'
+$env:DATABRICKS_TOKEN    = 'dapi...'
+$env:DATABRICKS_CATALOG  = 'dev_databricks'
+$env:DATABRICKS_SCHEMA   = 'default'
+```
+
+**2）验证查询**——会真实访问 MCP，约 10～30 秒
+
+```powershell
+uv run --locked python app.py --check
+```
+
+输出应包含 `shipment_count 500`、`eligible_count 380`、`on_time_count 304`、`delayed_count 76`、`on_time_rate 0.8`；`rows` 是当前页条数（20），不是总量。
+
+**3）启动页面**
+
+```powershell
+uv run --locked python app.py
+```
+
+打开 <http://127.0.0.1:8766>，终端保持占用，`Ctrl+C` 停止。
+
+> [!TIP]
+> 想少敲命令就用 F5 打断点运行，见 [5.2](#52-在-vs-code-中运行或调试)；没有凭据时先做离线检查，见 [7.1](#71-离线检查)。
+
+## 4. 配置 Databricks MCP
+
+### 4.1 确认培训数据与权限
 
 从讲师处获取工作区 Host、Catalog、Schema、已授权的访问方式及可用的 SQL MCP 地址。**克隆本案例目录不会创建 Databricks 表，也不附带讲师 Token 或共享账号。** 表名与字段约定见当前功能的 `spec.md`、`data-model.md` 和 `contracts/api.md`。
 
@@ -72,9 +148,20 @@ uv run --locked python tools/check_training.py
 
 Databricks 另有 Unity Gateway 的 `system.ai.dbsql` 入口；它的启用条件、权限和工具契约需另外核对。不要仅替换 URL 就假定与当前代码兼容。工作区只有其他入口或仅允许交互式 OAuth 时，先由讲师确认课程适配方式；当前 Python 应用不会自动完成浏览器 OAuth 登录或刷新令牌。
 
-### 3.2 首次使用：环境变量方式
+### 4.2 提供凭据
 
-下面配置同时供 Python 应用与仓库中的 [.vscode/mcp.json](.vscode/mcp.json) 使用。请在 VS Code 之外单独打开 Windows PowerShell，先进入当前案例目录，再在**这个窗口**运行配置与启动命令；不要使用随后要关闭的 VS Code 集成终端。把两处 Host 都换成自己的工作区地址，都不带 `/?o=...` 或末尾 `/`：
+凭据有两个消费者，读取来源不同：
+
+| 消费者 | 读取方式 |
+|---|---|
+| Python 应用（终端运行、F5 调试） | 进程环境变量；F5 时由 `.env` 注入 |
+| `.vscode/mcp.json`（Copilot 的 MCP 连接） | VS Code 进程环境里的 `${env:...}` |
+
+两个 Host 变量名不同是有原因的：Python 应用需要完整的 `https://...` 地址；而 `mcp.json` 的 `url` 必须以**字面** `https://` 开头，完整地址放进变量会触发“URL 必须以 http:// 或 https:// 开头”的提示。所以只把域名放进 `DATABRICKS_HOSTNAME`。都不带 `/?o=...` 或末尾 `/`。
+
+#### 方式 A：终端环境变量（推荐）
+
+请在 VS Code 之外单独打开 Windows PowerShell，进入当前案例目录，在**这个窗口**设置并启动；不要使用随后要关闭的 VS Code 集成终端：
 
 ```powershell
 $env:DATABRICKS_HOST = 'https://你的工作区.azuredatabricks.net'
@@ -92,17 +179,33 @@ try {
 }
 ```
 
-`DATABRICKS_HOST` 是给 Python 应用的完整地址；`DATABRICKS_HOSTNAME` 只供 `.vscode/mcp.json`，因为该文件的 `url` 必须以字面的 `https://` 开头，把完整地址放进变量会触发“URL 必须以 http:// 或 https:// 开头”的提示。`DATABRICKS_MCP_URL` 可选，用于覆盖应用默认拼接的端点。Catalog/Schema 换成培训实际位置。隐藏输入避免 Token 出现在命令文本中；应用仍需在本机进程内使用 Token。不要把凭据写入 README、聊天、前端或 Git。应用进程本身不自动加载 `.env`；仅第 4 节的 F5 配置会通过 `envFile` 注入。
+`DATABRICKS_MCP_URL` 可选，用于覆盖应用默认拼接的端点。Catalog/Schema 换成培训实际位置。隐藏输入避免 Token 出现在命令文本中。不要把凭据写入 README、聊天、前端或 Git。
 
-环境变量只对当前终端及其后启动的子进程生效。Python 命令可以直接在本窗口运行；如需 VS Code 继承这些变量，保存工作后完全退出已有 VS Code 进程，再从此窗口打开仓库：
+环境变量只对当前终端及其后启动的子进程生效。Python 命令可以直接在本窗口运行；如需 VS Code 继承这些变量，**完全退出**已有 VS Code 进程，再从此窗口打开仓库：
 
 ```powershell
 code --new-window .
 ```
 
-若 `code` 命令不可用，先按 VS Code 安装说明配置命令行入口；重新从桌面打开的 VS Code 不会自动继承另一个 PowerShell 窗口的临时变量。关闭本窗口后再次操作，需要重新设置地址和 Token。
+> [!WARNING]
+> 重新从桌面打开的 VS Code 不会继承另一个 PowerShell 窗口的临时变量；关闭本窗口后再次操作需要重新设置。这是 MCP 显示“无法启动”最常见的原因。
 
-仓库已提供以下兼容 VS Code Local 会话的配置，无需把实际 Token 填进去：
+#### 方式 B：用 `.env` 管 F5 调试
+
+不想每次启动都依赖终端变量时，复制模板并填自己的值：
+
+```powershell
+Copy-Item .env.example .env
+```
+
+`.env` 已被 `.gitignore` 忽略，只在 F5 时通过 `envFile` 注入；应用进程本身不读它。注意两点：
+
+- `DATABRICKS_TOKEN=` 留空会**覆盖**终端里的同名变量。不用就填值，或把整行注释掉。
+- `.env` 不会让 Copilot 的 MCP 生效。`DATABRICKS_HOSTNAME` 仍必须在 VS Code 进程环境里。
+
+#### Copilot 侧的 MCP 配置
+
+上面两种方式只解决 Python 应用怎么拿到凭据。Copilot 的连接由 `.vscode/mcp.json` 决定，与选哪种方式无关，仓库已提供且无需填入实际 Token：
 
 ```json
 {
@@ -118,9 +221,10 @@ code --new-window .
 }
 ```
 
-新版 VS Code 可能区分 Copilot 与 Local harness，以及 Global、用户和工作区配置。此仓库使用 `.vscode/mcp.json` 的 `servers` 格式；请在能读取该配置的 Local 会话中操作。如果 IDE 提示迁移配置，按[官方配置说明](https://code.visualstudio.com/docs/agent-customization/mcp-servers)选择对应会话和配置位置，再验证工具调用；不要仅因文件存在就认为 MCP 可用。
+> [!NOTE]
+> 新版 VS Code 可能区分 Copilot 与 Local harness，以及 Global、用户和工作区配置。此仓库使用 `.vscode/mcp.json` 的 `servers` 格式；请在能读取该配置的 Local 会话中操作。如果 IDE 提示迁移配置，按[官方配置说明](https://code.visualstudio.com/docs/agent-customization/mcp-servers)选择对应会话和配置位置，再验证工具调用；不要仅因文件存在就认为 MCP 可用。
 
-### 3.3 在 Copilot 中验证工具和表读取
+### 4.3 在 Copilot 中验证工具和表读取
 
 单独打开当前案例目录，按组织要求信任工作区。通过命令面板的 `MCP: Add Server` 或 `Chat: Open Customizations` 中的 MCP 管理入口查看配置；已有的 `databricksTraining` 无需再次添加。也可打开 `.vscode/mcp.json`，使用可用的 Start/Restart 控件。核对信任及工具调用提示后，在 Agent 的工具列表中启用只读查询和轮询工具。不同 VS Code 版本入口可能不同。
 
@@ -135,9 +239,9 @@ UNION ALL
 SELECT 'carriers', COUNT(*) FROM dev_databricks.default.carriers;
 ```
 
-展开聊天中的工具调用，确认执行的是该 MCP 的工具，且返回的实际计数与第 3.1 节一致。“Discovered tools”只说明发现了工具，浏览器登录也不代替应用的 Bearer Token。“浏览资源”灰色不影响仅提供 tools 的服务。
+展开聊天中的工具调用，确认执行的是该 MCP 的工具，且返回的实际计数与 [4.1](#41-确认培训数据与权限) 一致。“Discovered tools”只说明发现了工具，浏览器登录也不代替应用的 Bearer Token。“浏览资源”灰色不影响仅提供 tools 的服务。
 
-### 3.4 已有个人 MCP 配置：可选复用方式
+### 4.4 复用已有 MCP 配置
 
 如果你已在自己的 VS Code 配置中验证过 `databricksTraining`，可复用它，不必再配一份。Python 默认**不自动读取** VS Code 配置；使用 `--vscode-config` 才会读取：
 
@@ -152,32 +256,29 @@ uv run --locked python app.py --vscode-config .vscode/mcp.json --check
 
 省略路径时，默认文件为 `%APPDATA%/Code/User/mcp.json`，不是工作区文件或 Copilot Global 配置。其他路径需自己指定；支持 JSON/JSONC，以及 `servers` 或 `mcpServers` 下名为 `databricksTraining` 的配置，认证头须为 `Bearer ...`。
 
-Python 可展开 `${env:变量名}`，**不能读取 VS Code 的 `${input:...}` 或 IDE 中缓存的 OAuth 登录状态**。遇到这两种配置，按第 3.2 节为应用单独提供环境变量；不要把实际 Token 贴到配置里。`DATABRICKS_CATALOG` 和 `DATABRICKS_SCHEMA` 始终由应用进程的环境变量设置，与 MCP 配置文件分开。
+Python 可展开 `${env:变量名}`，**不能读取 VS Code 的 `${input:...}` 或 IDE 中缓存的 OAuth 登录状态**。遇到这两种配置，按 [4.2](#42-提供凭据) 为应用单独提供环境变量；不要把实际 Token 贴到配置里。`DATABRICKS_CATALOG` 和 `DATABRICKS_SCHEMA` 始终由应用进程的环境变量设置，与 MCP 配置文件分开。
 
-**两条连接分别验证：** Copilot → MCP 用于开发时了解数据；浏览器 → 本地 Python → MCP 用于应用运行。前者成功不代表后者已配置好。页面必须读取运行时查询结果，不能把 Copilot 聊天返回值写死在代码中。
+> [!IMPORTANT]
+> **两条连接分别验证：** Copilot → MCP 用于开发时了解数据；浏览器 → 本地 Python → MCP 用于应用运行。前者成功不代表后者已配置好。页面必须读取运行时查询结果，不能把 Copilot 聊天返回值写死在代码中。
 
-## 4. 检查连接并启动本地应用
+## 5. 运行与调试
 
-完成第 3.2 节环境变量配置后，在**同一个 PowerShell 窗口**执行：
+### 5.1 终端启动
+
+完成 [4.2](#42-提供凭据) 后，在**同一个 PowerShell 窗口**执行：
 
 ```powershell
 uv run --locked python app.py --check
 uv run --locked python app.py
 ```
 
-第一条成功后再执行第二条；服务运行时终端会保持占用。打开 <http://127.0.0.1:8766>，保持终端开启；修改 Python 后 Ctrl+C 停止并重新启动，修改静态页面后刷新浏览器。
+第一条成功后再执行第二条；服务运行时终端会保持占用。打开 <http://127.0.0.1:8766>，保持终端开启；修改 Python 后 `Ctrl+C` 停止并重新启动，修改静态页面后刷新浏览器。
 
 `--check` 会实际查询 Dashboard 业务并输出 `summary`、当前页 `rows` 和来源信息。未筛选的培训快照应为总量 500、有效分母 380、准时 304、延误 76、准时率 80.00%；`rows` 是当前页条数，不是总量。网页应显示指标、承运商筛选、对比图、趋势及分页明细。
 
-### 在 VS Code 中运行或调试（可选）
+### 5.2 在 VS Code 中运行或调试
 
-仓库带了 `.vscode/launch.json`，可以不开终端直接按 F5。先复制模板并填自己的值：
-
-```powershell
-Copy-Item .env.example .env
-```
-
-`.env` 已被 `.gitignore` 忽略。`DATABRICKS_TOKEN` 可以填在这个文件里，也可以把该行注释掉、改在启动 VS Code 的终端里设置 `$env:DATABRICKS_TOKEN`——注意**留空会覆盖**终端里的同名变量。
+仓库带了 `.vscode/launch.json`，可以不开终端直接按 F5。先按 [4.2 方式 B](#方式-b用-env-管-f5-调试) 准备好 `.env`。
 
 | 配置 | 行为 |
 |---|---|
@@ -185,11 +286,14 @@ Copy-Item .env.example .env
 | 看板：检查数据（读 .env，--check） | 查一次、打印指标、退出 |
 | 看板：启动网页（提示输入 Host + Token） | 没有 `.env` 时的兜底，弹框输入 |
 
-在行号左侧点一下即可打断点。请求进入后停在断点上，此时**浏览器会一直转圈**（该请求线程被挂起），按 F5 继续才返回。改完 Python 代码要 Shift+F5 停止再启动，没有热重载。
+在行号左侧点一下即可打断点。请求进入后停在断点上，此时**浏览器会一直转圈**（该请求线程被挂起），按 F5 继续才返回。改完 Python 代码要 `Shift+F5` 停止再启动，没有热重载。
 
-编辑器右上角的 ▷「Run Python File」**不走** `launch.json`，拿不到环境变量，会报 URL 或 Token 相关错误；请用 F5，或在左侧「运行和调试」面板选择上面的配置。
+> [!WARNING]
+> 编辑器右上角的 ▷「Run Python File」**不走** `launch.json`，拿不到环境变量，会报 URL 或 Token 相关错误。请用 F5，或在左侧「运行和调试」面板选择上面的配置。
 
-启动方式汇总，选一个即可，不要混用凭据来源：
+### 5.3 三种入口对照
+
+选一个即可，不要混用凭据来源：
 
 | 入口 | 凭据来源 | 适用场景 |
 |---|---|---|
@@ -197,10 +301,9 @@ Copy-Item .env.example .env
 | `.\start.ps1` | 自动同步依赖；缺 Token 时隐藏输入，或加 `-UseVSCodeConfig` 复用默认用户配置 | 干净的一键启动 |
 | F5（`.vscode/launch.json`） | `.env`，或弹框输入 | 需要打断点调试 |
 
-第 3.4 节的显式 `--vscode-config` 命令更适合核对配置路径与来源。
+[4.4](#44-复用已有-mcp-配置) 的显式 `--vscode-config` 命令更适合核对配置路径与来源。
 
-
-## 5. 使用 Spec Kit 复盘
+## 6. Spec Kit 复盘
 
 SDD（Specification-Driven Development，规格驱动开发）先把需求、边界和验收写清楚，再据此计划、拆任务、实现和验证。Spec Kit 提供相应模板与 Agent Skills；它不会替你判断业务口径，也不以文档齐全或任务勾选代替运行验收。
 
@@ -218,7 +321,7 @@ SDD（Specification-Driven Development，规格驱动开发）先把需求、边
 
 在 VS Code 的 Copilot Agent 聊天中输入 `/`，确认能选择 `/speckit-specify`、`/speckit-plan`、`/speckit-tasks`、`/speckit-implement` 等。此项目的技能需手动调用；**下面的斜杠命令是聊天消息，不是终端命令**。CLI 的 `integration status` 通过也不能证明 IDE 已发现技能。
 
-建议先按第 6 节运行验收，再阅读代码对应的任务，最后在 Agent 中做只读复盘：
+建议先按[第 7 节](#7-验收)运行验收，再阅读代码对应的任务，最后在 Agent 中做只读复盘：
 
 ```text
 请先读 AGENTS.md、constitution 和 specs/001-carrier-dashboard 中的 spec、plan、tasks。
@@ -228,10 +331,11 @@ SDD（Specification-Driven Development，规格驱动开发）先把需求、边
 
 `/speckit-analyze` 可用于只读检查 spec/plan/tasks 的一致性。真正的生成与实现练习在 `copilot-logistics-dashboard-starter` 进行，按它的 README 与课堂提示词操作；不要在完成版重新跑 implement 或盲目重建规格。
 
+## 7. 验收
 
-## 6. 验收：区分离线检查与实际效果
+### 7.1 离线检查
 
-### 离线检查（不需要 Databricks 凭据）
+不需要 Databricks 凭据：
 
 ```powershell
 uv run --locked python tools/check_training.py
@@ -241,7 +345,9 @@ node --check static/app.js
 
 完成版当前有 8 项离线测试。它们使用构造的 MCP 响应，不连接真实 Databricks。
 
-### 实际业务验收（需要 MCP 和培训快照）
+### 7.2 实际业务验收
+
+需要 MCP 和培训快照：
 
 | 操作 | 预期结果 |
 |---|---|
@@ -260,16 +366,15 @@ uv run --locked python app.py --check --carrier CAR002
 uv run --locked python tools/verify_live.py
 ```
 
-若走第 3.4 节的配置文件路径，两条命令都要加相应的 `--vscode-config` 参数。
+若走 [4.4](#44-复用已有-mcp-配置) 的配置文件路径，两条命令都要加相应的 `--vscode-config` 参数。
 
 把实际执行、结果和未验证项写入 [docs/validation.md](docs/validation.md)。详细场景见 [acceptance.md](specs/001-carrier-dashboard/acceptance.md)。`ready`、离线测试通过、MCP 成功和页面验收是不同证据，分别记录。
 
-### PR 与 CI
+### 7.3 PR 与 CI
 
 完成跟练后先 `git diff -- .` 审查改动、凭据和业务范围，再按讲师安排提交分支与 PR。工作坊根目录的 [CI](../.github/workflows/ci.yml) 在 push/PR 时恢复活动功能、检查课堂结构、运行离线检查及 JavaScript 语法检查。它不使用 Databricks Token、不查询现场数据、不部署服务器；绿色 CI 不能代替真实 MCP 和浏览器验收。
 
-
-## 7. 常见问题
+## 8. 故障排查
 
 | 现象 | 处理方法 |
 |---|---|
@@ -288,12 +393,12 @@ uv run --locked python tools/verify_live.py
 | service 不存在或无权访问 | 确认完整 MCP 地址，勿混用 `/api/2.0/mcp/sql` 与 `system.ai.dbsql`；按实际服务检查启用条件及权限 |
 | Copilot 能查，Python 查不到 | 区分 IDE 登录缓存与应用凭据，核对默认/显式配置路径、环境变量是否继承；IDE 工具无需常驻来代理 Python 请求 |
 | 查不到表、字段类型错误或数值不符 | 核对 Catalog/Schema、业务类型表与培训快照；不要改成 `_raw` 表或用固定值掩盖查询问题 |
-| 端口已占用 | Ctrl+C 停止自己启动的旧进程，或用 `uv run --locked python app.py --port 8877` 并打开对应地址 |
+| 端口已占用 | `Ctrl+C` 停止自己启动的旧进程，或用 `uv run --locked python app.py --port 8877` 并打开对应地址 |
 | 页面一直加载、502 或结果被截断 | 查看应用终端及 MCP 实际错误；检查网络、查询计算与结果完整性。修复后重试，不以固定数据兜底 |
 
 排查时可提供脱敏后的错误类型、表名和执行步骤；不要发送 Token 或完整的个人配置文件。
 
-## 8. 文件导航与参考
+## 9. 目录结构与参考
 
 | 路径 | 用途 |
 |---|---|
