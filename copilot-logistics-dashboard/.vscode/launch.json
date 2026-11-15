@@ -1,0 +1,56 @@
+{
+  "version": "0.2.0",
+  "inputs": [
+    {
+      "id": "dbxHost",
+      "type": "promptString",
+      // 首次输入后本窗口内会记住；不要把它写成固定值，避免把工作区地址提交进仓库
+      "description": "Databricks 工作区地址（https://...，不带末尾斜杠）"
+    },
+    {
+      "id": "dbxToken",
+      "type": "promptString",
+      "description": "Databricks Token（不回显，仅本次进程使用）",
+      "password": true
+    }
+  ],
+  "configurations": [
+    {
+      // 常驻服务，调试页面请求时用这个。停在断点后浏览器那个请求会挂起，继续后恢复。
+      "name": "看板：启动网页（127.0.0.1:8766）",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/app.py",
+      "args": ["--port", "8766"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "stopOnEntry": false,
+      // 只调自己的代码；想单步进 httpx / mcp 库内部就改成 false
+      "justMyCode": true,
+      "env": {
+        "DATABRICKS_HOST": "${input:dbxHost}",
+        "DATABRICKS_TOKEN": "${input:dbxToken}",
+        "DATABRICKS_CATALOG": "dev_databricks",
+        "DATABRICKS_SCHEMA": "default"
+      }
+    },
+    {
+      // 查一次就退出，适合快速在 SQL/校验逻辑上打断点。
+      "name": "看板：检查数据（--check，一次性）",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/app.py",
+      "args": ["--check"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "stopOnEntry": false,
+      "justMyCode": true,
+      "env": {
+        "DATABRICKS_HOST": "${input:dbxHost}",
+        "DATABRICKS_TOKEN": "${input:dbxToken}",
+        "DATABRICKS_CATALOG": "dev_databricks",
+        "DATABRICKS_SCHEMA": "default"
+      }
+    }
+  ]
+}
