@@ -1,6 +1,12 @@
 .venv/
+venv/
+dist/
+*.egg-info/
 __pycache__/
 *.pyc
+*.tmp
+*.swp
+.idea/
 .env
 .env.*
 !.env.example
