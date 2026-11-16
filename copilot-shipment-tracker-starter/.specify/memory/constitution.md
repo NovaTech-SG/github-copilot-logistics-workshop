@@ -1,29 +1,23 @@
-# Session 2 Logistics Constitution
+# 异常跟进增量练习原则
 
-## Core Principles
+## 在已有应用上形成新功能规格
 
-### I. 业务规格与验收先行
-功能以活动功能目录的spec.md为业务依据，plan.md写技术选择，tasks.md记录步骤。需求变化先更新规格及验收，再调整代码。生成内容必须由业务人员核对。
+列表、详情、Databricks 查询与本机存储基础已经提供。课堂以新增保存和确认功能为目标，从需求与 mockup 形成新 spec，经核对后 plan、tasks、implement。初始 specs 为空，各阶段分别调用，不恢复预写答案。
 
-### II. 真实来源与最小权限
-业务源数据只通过已有Databricks只读MCP获取。只调用execute_sql_read_only与poll_sql_result。不回写源表，不用CSV、聊天结果或硬编码答案替代运行时查询。连接失败明确提示。
+## 源只读与本机保存
 
-### III. 凭据与本地状态隔离
-Token仅供后端使用，不输出、不入Git、不进前端。异常跟进只写当前项目SQLite，以exception_id为键。只在当前仓库工作，学员不得读取相邻完成版。
+源数据只通过现有 Databricks MCP 读取。跟进结果只写当前项目 SQLite，以 exception_id 为键，不回写源表，也不覆盖同运输单的其他异常。源状态与本机状态分别展示。
 
-### IV. 小范围实现与可核对结果
-课堂先实现P1任务，P2扩展另行安排。复用已有连接和校验，不新增无必要依赖。必要测试对应业务规则，分别报告离线检查、实时查询、页面验证与远程CI。
+## 校验与确认
 
-### V. 保留教学检查点
-起始项目的TODO必须由学员实现；完成版用于讲师展示和结果复盘。预置文档不表示Copilot已经在课堂运行，任务勾选不表示实时环境已通过。
+状态按 OPEN → IN_PROGRESS → RESOLVED 推进，可同状态补充备注。备注去首尾空格后必填且最多 1000 字，过期原状态不能覆盖新记录。保存失败不产生部分更新；前端保存后重新 GET 核对，未确认不显示成功。
 
-## Technical Constraints
-Python 3.12、各项目独立uv环境、原生HTML/CSS/JavaScript。应用只在本地运行。CI仅离线检查；提交、推送、PR和发布需要用户另行安排。
+## 小范围修改与独立项目
 
-## Workflow
-项目原则课前准备一次。每个功能按specify、clarify（需要时）、plan、tasks、implement和converge推进。技能在Copilot聊天中逐步调用，CLI只负责项目设置与元数据检查。
+复用现有 MCP、查询、列表、详情、规则校验、SQLite 建表和 overlay，不扩大为重写应用。仅在本项目工作，不读相邻完成版、内部备份或历史答案。Python 3.12、独立 uv、原生前端，保持现有依赖。
 
-## Governance
-本文件记录项目原则，AGENTS.md负责Agent操作入口。平台权限、测试和人工审阅共同约束结果。修改这些教学约定时同步Spec、计划、任务、运行说明和课件。
+## 证据与凭据
 
-**Version**: 1.0.0 | **Ratified**: 2026-11-09 | **Last Amended**: 2026-11-09
+Token 仅后端使用，不输出、不入 Git、不进入页面。mockup 固定样例不参与查询或保存。结构检查不证明业务完成；测试、实时 MCP、页面保存与同库重启恢复分别记录。仅本地运行，不自动提交、推送或部署。
+
+**Version**: 1.1.0 | **Ratified**: 2026-11-09 | **Last Amended**: 2026-11-16

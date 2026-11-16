@@ -2,8 +2,9 @@
   "specify_cli_version": "1.3.2",
   "integration": "copilot",
   "layout": "skills",
-  "feature_directory": "specs/001-exception-followup",
-  "checkpoint": "learner-start",
-  "prepared_on": "2026-11-09",
-  "provenance": "Official CLI initialized; feature artifacts prepared from confirmed training requirements using installed skill templates. Not a recording of a live Copilot session."
+  "checkpoint": "feature-addition",
+  "mockup": "mockup/index.html",
+  "prompt_guide": "docs/prompts.md",
+  "prepared_on": "2026-11-16",
+  "provenance": "Read-only queue and detail baseline provided. The learner generates a new feature spec and implements local follow-up save and readback confirmation."
 }

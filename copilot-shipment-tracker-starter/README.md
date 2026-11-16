@@ -4,7 +4,7 @@
 
 **从这个仓库开始跟练。** 对应完成版目录为 `copilot-shipment-tracker`，留作课后核对；课堂请只打开本案例目录，不让 Agent 读取相邻完成版。课件中的 `shipment-tracker-starter` 是本案例简称。
 
-异常读取、列表、详情、规则校验与 SQLite 表结构已提供，学员完成保存和重新读取确认。
+这是在现有应用上新增功能的练习。异常读取、列表、详情、规则校验与 SQLite 表结构已提供；学员参考 mockup，从空规格生成本机保存与重读确认的需求、方案和任务，再实现两处 TODO。
 
 > [!IMPORTANT]
 > 起始版能读取列表，但点保存会提示“课堂练习：请完成……”，保存 API 返回 **501**，属于**预期状态**。实现 P1 后才能进入持久化验收。
@@ -24,7 +24,7 @@
 推荐顺序：先决条件 → 获取代码与依赖 → 快速开始 → 配置 Databricks MCP → 运行与调试 → Spec Kit 跟练 → 验收。
 
 > [!NOTE]
-> 没有 Databricks 凭据时，仍可阅读规格、完成依赖安装和离线检查；页面业务数据及保存后重读验收需要实际 MCP 连接。
+> 没有 Databricks 凭据时，仍可看 mockup、讨论新增需求、生成规格、安装依赖和进行离线检查；页面业务数据及保存后重读验收需要实际 MCP 连接。
 
 ## 学习目标
 
@@ -32,7 +32,7 @@
 - [ ] 实现 `save`：带原状态校验、输入校验、事务写入
 - [ ] POST 成功后重新 GET 同一异常确认，失败或未确认时不能提示成功
 - [ ] 让 `OPEN → IN_PROGRESS → RESOLVED` 的非法跳转被拒绝，且不改变原记录
-- [ ] 完成 P1 后把 `.specify/training.json` 的 `checkpoint` 改为 `learner-implemented` 并记录真实验证结果
+- [ ] 用 Spec Kit 生成本次新增功能的规格、计划和任务，按实际结果验收
 
 ## 本项目文档怎么读
 
@@ -48,12 +48,12 @@
 | 章节 | 内容 | 用时 |
 |---|---|---|
 | [1. 先决条件](#1-先决条件) | 工具、账号与网络 | 首次约 10 分钟 |
-| [2. 获取代码与依赖](#2-获取代码与依赖) | 克隆、`uv sync`、课堂功能恢复 | 约 10 分钟 |
+| [2. 获取代码与依赖](#2-获取代码与依赖) | 克隆、`uv sync`、增量起点检查 | 约 10 分钟 |
 | [3. 快速开始](#3-快速开始) | 确认起始状态正常 | 约 2 分钟 |
 | [4. 配置 Databricks MCP](#4-配置-databricks-mcp) | 数据权限、凭据、Copilot 验证 | 约 10 分钟 |
 | [5. 运行与调试](#5-运行与调试) | 终端、`start.ps1`、F5 断点、本地库 | 约 2 分钟 |
 | [6. Spec Kit 跟练](#6-spec-kit-跟练) | 课堂四步与 `implement` 提示词 | 约 5 分钟 |
-| [7. 验收](#7-验收) | 离线检查、状态流转、检查点更新 | 约 8 分钟 |
+| [7. 验收](#7-验收) | 离线检查、状态流转、保存与确认 | 约 8 分钟 |
 | [8. 故障排查](#8-故障排查) | 常见现象与处理 | 按需 |
 | [9. 目录结构与参考](#9-目录结构与参考) | 文件导航与官方链接 | 参考 |
 
@@ -99,8 +99,8 @@ uv run --locked python tools/check_training.py
 
 | 命令 | 预期输出 |
 |---|---|
-| `bootstrap_training.py` | 首次 `restored`，再次运行 `preserved` |
-| `check_training.py` | `ready` |
+| `bootstrap_training.py` | 未生成规格时 `awaiting_specification`；有有效活动规格时 `preserved` |
+| `check_training.py` | `ready`，初始 `stage: requirements` |
 | `speckit.ps1 integration status --json` | `status: ok`，无缺失或被改写的官方文件 |
 
 这三项都**不验证** MCP 连接或页面业务。
@@ -108,9 +108,11 @@ uv run --locked python tools/check_training.py
 > [!NOTE]
 > 仓库已预装 **官方 Spec Kit 1.3.2** 的 Copilot Skills 和模板。`.\tools\speckit.ps1` 通过 uv 调用固定 CLI，首次可能需要下载；不用额外安装全局 `specify`，也不要重新执行 `specify init --force`。
 
-当前功能为 `specs/001-exception-followup`。Spec Kit 忽略本机活动指针 `.specify/feature.json`，bootstrap 依据已提交的 `.specify/training.json` 恢复它，并保留已有有效选择。`uv sync --locked` 生成本案例目录自己的 `.venv`；后续命令都在本案例目录内运行。
+初始 `specs/` 只有 `.gitkeep`，没有预置规格和活动指针。bootstrap 不生成或恢复旧规格；课堂 specify 创建新功能目录与 `.specify/feature.json`。示例名称为 `specs/001-exception-followup`，已有有效选择会保留。`uv sync --locked` 生成本案例目录自己的 `.venv`；后续命令都在本案例目录内运行。
 
 ## 3. 快速开始
+
+先在浏览器直接打开 [新增功能效果稿](mockup/index.html)，对照已有队列理解保存后的目标状态。它不需要服务或凭据，也不会执行真实查询或保存。
 
 前提：已完成第 1、2 节。以下命令都在本案例目录内执行。
 
@@ -337,34 +339,21 @@ uv run --locked python app.py --db data/practice-02.sqlite3
 
 ## 6. Spec Kit 跟练
 
-SDD（Specification-Driven Development，规格驱动开发）先把需求、边界和验收写清楚，再据此计划、拆任务、实现和验证。Spec Kit 提供相应模板与 Agent Skills；它不会替你判断业务口径，也不以文档齐全或任务勾选代替运行验收。
+先看 [数据来源与表关系](docs/data-source.md)、[新增功能效果稿](mockup/index.html) 和 [分步提示词](docs/prompts.md)。这次是在已有队列上新增本机保存，不重写应用。
 
-| 先读的文件 | 用途 |
-|---|---|
-| [AGENTS.md](AGENTS.md) | Agent 的项目范围、凭据与数据边界 |
-| [constitution](.specify/memory/constitution.md) | 项目原则 |
-| [spec.md](specs/001-exception-followup/spec.md) | 要做什么、业务规则与验收条件 |
-| [plan.md](specs/001-exception-followup/plan.md) | 怎样实现、沿用哪些组件 |
-| [tasks.md](specs/001-exception-followup/tasks.md) | 按依赖推进的任务与课堂范围 |
-| [完整课堂提示词](docs/prompts.md) | 可逐条复制到 Copilot 的技能调用 |
-| [README 课堂步骤](<README.md#6-spec-kit-跟练>) | 版本、检查点及课前准备说明 |
+| 步骤 | Copilot Agent 聊天操作 | 本步核对 |
+|---|---|---|
+| 1 | `/speckit-specify` | 从新增需求与 mockup 生成 spec，明确已有与新增范围 |
+| 2 | 必要时 `/speckit-clarify` | 状态、备注、原状态过期与重读确认 |
+| 3 | `/speckit-plan` | 复用读取基础，确定保存与前端确认方案 |
+| 4 | `/speckit-tasks`、`/speckit-analyze` | 任务依赖、必要测试和一致性 |
+| 5 | 第一轮 `/speckit-implement` | 后端 save、校验与事务保存 |
+| 6 | 第二轮 `/speckit-implement` | 前端 POST 后 GET 核对与反馈 |
+| 7 | `/speckit-converge` | 保存、恢复和失败场景，确认已有功能无回归 |
 
-这些规格、计划和任务是课前准备的检查点，不是已执行成功的 Copilot 对话记录。学员不需要在 15 分钟内从零重建全部材料。
+命令逐条发到聊天，每步审阅后再继续。初始没有 spec/plan/tasks；功能目录和活动指针由官方 specify 技能创建，后续以实际生成的任务 ID 为准。
 
-在 VS Code 的 Copilot Agent 聊天中输入 `/`，确认能选择 `/speckit-specify`、`/speckit-plan`、`/speckit-tasks`、`/speckit-implement` 等。此项目的技能需手动调用；**下面的斜杠命令是聊天消息，不是终端命令**。CLI 的 `integration status` 通过也不能证明 IDE 已发现技能。
-
-课堂按下面顺序推进，每步先看结果与文件差异，再继续：
-
-1. 讲师用 `/speckit-specify` 展示从业务描述更新规格；有未确认边界时再 `/speckit-clarify`。无新歧义可以直接结束澄清。
-2. 阅读预置 `plan.md`、`tasks.md`。`/speckit-plan`、`/speckit-tasks` 的完整再生成可在课前或课后练习，课堂直接使用已核对的检查点。
-3. 用下面的 `/speckit-implement` 只实现本次范围。若 Agent 扩大范围或准备读取完成版，先停止并纠正计划。
-4. 按[第 7 节](#7-验收)验收，再使用 `docs/prompts.md` 中的 `/speckit-analyze` 检查文档一致性、`/speckit-converge` 查实现缺口；明确限定本次范围。
-
-```text
-/speckit-implement 只执行当前功能的 P1 任务，补 services/store.py 的 save、static/app.js 的 submit 和必要测试。复用已有连接、列表、详情、校验及 SQLite 结构。 当前活动功能为 specs/001-exception-followup。先读 AGENTS.md、constitution、spec、plan 和 tasks。仅在当前仓库工作，不读取相邻完成版；运行时从只读 MCP 获取真实结果，不回写 Databricks，不硬编码聊天结果。报告实际执行和未验证项目，不自动提交、推送或部署。
-```
-
-**15 分钟范围：** 补 `FollowUpStore.save`、前端表单 submit 和相应测试。保存需核对原状态、校验输入、事务写入；前端 POST 成功后再 GET 同一异常确认，失败或尚未确认时不得提示成功。
+**课堂 15 分钟范围不变：** 补 `FollowUpStore.save`、前端 submit 和相应测试。复用已有查询、列表、详情、校验和 SQLite 结构；源只读、跟进只写本机。mockup 不参与实际查询或保存。
 
 ## 7. 验收
 
@@ -377,7 +366,7 @@ uv run --locked python -m unittest discover -s tests -v
 node --check static/app.js
 ```
 
-起始版的 3 项测试覆盖已提供的规则与查询输入，不证明保存功能已完成；实现后补保存、重读、非法输入和失败不写入的测试。
+起始版包含 3 项规则与查询输入检查，以及 10 项空规格和阶段推进检查。它们不证明保存功能已完成；实施新增功能时再补保存、重读、非法输入和失败不写入等测试。
 
 ### 7.2 实际业务验收
 
@@ -395,24 +384,21 @@ node --check static/app.js
 > [!WARNING]
 > 起始版在第 2 步会提示保存练习未完成；先完成 Spec Kit P1 实现再继续验收，**不要**通过修改界面提示来绕过保存。
 
-按上面的清单核对，在本次课堂笔记或 PR 说明中记录实际执行、结果和未验证项。详细场景见 [acceptance.md](specs/001-exception-followup/acceptance.md)。`ready`、离线测试通过、MCP 成功和页面验收是不同证据，分别记录。
+按上面的清单核对，在本次课堂笔记或 PR 说明中记录实际执行、结果和未验证项。详细场景以本次生成并确认的 spec 为准。`ready`、离线测试通过、MCP 成功和页面验收是不同证据，分别记录。
 
-### 7.3 提交前更新课堂检查点
-
-起始版的 `check_training.py` 会在 `checkpoint` 为 `learner-start` 时确认核心业务仍保留 `NotImplementedError`。所以它适合课前检查；完成实现后若仍用这个标记，检查或 CI 可能因 TODO 已消失而失败。
-
-**完成本次 P1 并记录实际验证结果后**，在当前案例的 `.specify/training.json` 中只把 `checkpoint` 字段从 `learner-start` 改为 `learner-implemented`，保留其他字段，再运行：
+### 7.3 检查新增功能的当前阶段
 
 ```powershell
 uv run --locked python tools/check_training.py
 ```
 
-> [!WARNING]
-> 该标记表示已离开起始检查点，只取消“业务应尚未实现”的检查，**不代表业务自动验收通过**。不要保留无用的 `NotImplementedError` 来满足旧检查，也不要在未实现时改标记冒充完成；P1 的测试、MCP 查询和页面操作仍按上述清单核对，未验证项如实记录。
+检查识别 `requirements → specified → planned → tasks-generated`，允许空规格及中间阶段，不会生成文档或覆盖已有选择。它不证明保存已通过，也不要求在业务完成后手工改 checkpoint 或保留旧 TODO。
+
+实现后仍需分别核对离线测试、实际 MCP、页面保存和同库重启恢复。
 
 ### 7.4 PR 与 CI
 
-完成跟练后先 `git diff -- .` 审查改动、凭据和业务范围，再按讲师安排提交分支与 PR。工作坊根目录的 [CI](../.github/workflows/ci.yml) 在 push/PR 时恢复活动功能、检查课堂结构、运行离线检查及 JavaScript 语法检查。它不使用 Databricks Token、不查询现场数据、不部署服务器；绿色 CI 不能代替真实 MCP 和浏览器验收。
+完成跟练后先 `git diff -- .` 审查改动、凭据和业务范围，再按讲师安排提交分支与 PR。工作坊根目录的 [CI](../.github/workflows/ci.yml) 在 push/PR 时检查当前课堂阶段、运行离线测试及 JavaScript 语法检查，不生成或恢复旧规格。它不使用 Databricks Token、不查询现场数据、不部署服务器；绿色 CI 不能代替真实 MCP 和浏览器验收。
 
 ## 8. 故障排查
 
@@ -421,8 +407,8 @@ uv run --locked python tools/check_training.py
 | `uv`、`git`、`node` 找不到 | 安装后重开终端，检查 PATH；Python 用 `uv run`，不用系统 `python` 代替 |
 | uv 下载失败或证书错误 | 检查公司代理、PyPI 与 Python 下载访问；按组织证书方案配置，不关闭 TLS 验证 |
 | PowerShell 拒绝 `.ps1` | 若是 ZIP 解压文件，检查文件阻止属性；按公司批准的脚本执行策略处理，受管电脑请联系 IT。Python 的 bootstrap/check 命令可先单独执行 |
-| `feature.json` 不存在 | 运行 `uv run --locked python tools/bootstrap_training.py`；它恢复当前课堂功能，不覆盖有效选择 |
-| `check_training.py` 不通过 | 先看报错中的文件或功能目录。起始检查点要求业务仍保留 `NotImplementedError`；实现完成后需按 [7.3](#73-提交前更新课堂检查点) 更新标记 |
+| `feature.json` 不存在 | 初始正常，课堂 specify 后由技能创建；若已有 spec，则核对活动选择，不覆盖学员成果 |
+| `check_training.py` 不通过 | 核对当前阶段的 spec、plan、tasks 与活动指针，按 [7.3](#73-检查新增功能的当前阶段) 检查；不需要手工改 checkpoint |
 | 保存按钮提示“课堂练习：请完成……” / 保存 API 501 | 起始版的预期状态，实现 `FollowUpStore.save` 与前端 submit 后才可用 |
 | `/speckit-*` 不显示 | 确认只打开本案例目录、当前会话支持 `.github/skills`、Copilot 可用且组织允许；重载窗口并检查 IDE 的技能发现能力。不要重跑 init 覆盖材料 |
 | 缺少 Token 或提示未展开变量 | 应用本身不读 `.env`：终端启动看环境变量，F5 由 `.vscode/launch.json` 的 `envFile` 注入。`${input:...}` 只能由 IDE 展开，Python 不支持 |
@@ -455,7 +441,8 @@ uv run --locked python tools/check_training.py
 | `services/tracker.py` | 业务调用与状态校验（已提供） |
 | `services/store.py` | 本地 SQLite 持久化（**`save` 待实现**） |
 | `static/` | 原生 HTML/CSS/JavaScript（**submit 待实现**） |
-| `specs/001-exception-followup/` | 当前功能的规格、计划、任务、数据模型与验收 |
+| `specs/` | 初始只有 `.gitkeep`，课堂生成新增功能规格、计划和任务 |
+| `mockup/` | 只展示新增保存与确认目标的静态效果稿 |
 | `data/followups.sqlite3` | 本机跟进记录，不提交 |
 | `tools/bootstrap_training.py` / `tools/check_training.py` | 首次克隆准备与课堂结构检查 |
 

@@ -1,25 +1,26 @@
-GitHub首次克隆后，如`.specify/feature.json`不存在，先运行`uv run --locked python tools/bootstrap_training.py`，再定位当前活动规格。不要覆盖已有有效的功能选择。
+# 异常跟进新增功能课堂规则
 
-# 学员跟练约定
+## 起点和练习目标
 
-## Spec Kit活动功能
+这是在现有应用上新增功能的练习。Databricks MCP、异常查询、队列、搜索筛选、分页、详情、规则校验、SQLite 建表和 overlay 已提供；本轮补齐本机保存与前端提交后确认。
 
-活动功能由`.specify/feature.json`记录，当前为`specs/001-exception-followup`。优先读取该目录spec.md、plan.md、tasks.md和`.specify/memory/constitution.md`。
+初始 `specs/` 只有 `.gitkeep`，没有预置 spec、plan、tasks 或活动功能指针。先读 `.specify/memory/constitution.md`、`docs/data-source.md`、`docs/prompts.md` 和 `mockup/README.md`。效果稿展示新增功能完成后的目标，不提供保存实现。
 
-使用本项目官方Copilot skills，逐步执行`/speckit-specify`、`/speckit-clarify`（有歧义时）、`/speckit-plan`、`/speckit-tasks`、`/speckit-implement`和`/speckit-converge`。当前为学员起始检查点，保留尚未完成的业务任务。课堂P1范围见tasks.md，不自动扩展P2。预置产物与任务勾选不作为真实运行证据。不要自动安装其他扩展、提交、推送或部署。
+## 按阶段新增功能
 
-先读specs/001-exception-followup/spec.md和specs/001-exception-followup/tasks.md，解释业务规则并列改动计划，再开始实现。
+1. 用户调用 `/speckit-specify` 后，针对本机保存与重读确认生成新功能规格。官方技能创建功能目录和 `.specify/feature.json`；bootstrap 不恢复旧规格。
+2. 按用户指令逐步 clarify、plan、tasks、analyze、implement 和 converge。已有活动规格时按指针读取，保留学员自己的内容。
+3. 需求没有要求改变的读取、列表、详情、查询和页面布局保持现有行为。本次主要修改 `services/store.py` 的 `save`、`static/app.js` 的 submit，以及必要测试。
+4. 每步先报告产物或拟改任务与文件，完成当前阶段后停下，不自动跑完整个流程。任务 ID 以本次生成结果为准。
+5. 不读取父目录、相邻完成版、内部备份或 Git 历史中的答案，不复制完整成品实现。
 
-- 仅在当前学员项目开发，不搜索父目录或相邻完成版。
-- 本阶段只完成services/store.py的save和static/app.js的表单submit处理，再补相应测试。复用已提供的连接、查询、校验、建表、overlay和api函数。
-- 源数据来自Databricks只读MCP。仅调用execute_sql_read_only与poll_sql_result，不写源表、不使用CSV或固定业务数据兜底。
-- 跟进状态与备注只写本项目SQLite，不修改Dashboard文件。按exception_id区分，不按shipment_id覆盖。
-- 按OPEN→IN_PROGRESS→RESOLVED推进，可同状态更新备注。备注非空、最多1000字；保存带原状态，过期时拒绝覆盖。
-- POST成功后重新GET核对。保存失败或未确认时不得提示成功。页面区分源状态与本机跟进。
-- Token只在后端，数据库和凭据不入Git。Python3.12与uv，前端保持原生实现。
-- 完成后运行离线测试和node --check static/app.js，如实记录实际查询、页面验证和未完成项。
-- 不自行提交、推送、部署或增加CD。
+## 数据与保存边界
 
-## 数据来源与表关系
-
-先读本项目 `docs/data-source.md`，核对 Databricks 只读 MCP、三张表的关联键和本项目使用范围。CSV 与效果稿只是参考，不是应用运行时数据源。
+- 运行时源数据通过现有 Databricks 只读 MCP 获取，只调用 `execute_sql_read_only` 和 `poll_sql_result`，不写源表。
+- 跟进状态和备注仅保存到本项目 SQLite，以 `exception_id` 区分。同一运输单的其他异常和源数据保持独立。
+- 复用已有状态与备注校验、事务连接及 overlay。状态按 OPEN → IN_PROGRESS → RESOLVED 推进，允许同状态补备注；提交要携带原状态。
+- 前端 POST 保存后 GET 同一异常，核对结果后才显示成功；已提交但未确认要单独说明。处理加载、失败与重复提交。
+- mockup 中的固定样例仅用于视觉参考；不作为运行时数据，不伪装成真实保存结果。
+- 保持 Python 3.12、独立 uv 环境、原生前端和现有依赖。Token 只在后端，不输出、不提交、不进页面；本机数据库不提交。
+- 结构检查允许没有规格、只有 spec、已有 plan 或已有 tasks，不用保留无效 TODO 来满足旧检查。
+- 完成后运行本项目离线测试与 `node --check static/app.js`。分别报告实时 MCP、页面与重启恢复的实际验证；没有用户明确要求，不提交、推送、部署或增加 CD。

@@ -33,7 +33,7 @@ Word 用于课程概览和数据理解；具体环境命令、功能范围和验
 |---|---|---|
 | 第一次开始 | 本页、选定学员项目的 `README.md` | 环境、个人授权、运行方式与当前练习起点 |
 | 理解课堂步骤 | 当前项目的 `docs/prompts.md` | Dashboard starter 从需求与 mockup 生成规格；逐步推进本次范围 |
-| 核对业务含义 | 当前功能的 `specs/`；Dashboard 初始先读 `docs/data-source.md`、`docs/prompts.md` 和 `mockup/` | 需求、数据字段、指标和状态规则；功能文档在课堂生成 |
+| 核对业务含义 | 当前功能的 `specs/`；两个 starter 初始先读 `docs/data-source.md`、`docs/prompts.md` 和 `mockup/` | 需求、数据字段、指标和状态规则；功能文档在课堂生成 |
 | 理解实现方案 | 同一功能下的 `plan.md`、`tasks.md`、`research.md`、`contracts/api.md` | 技术选择、任务顺序和接口约定 |
 | 验证自己的结果 | 当前项目 README 的验收章节 | 执行检查，在课堂笔记或 PR 中记录结果与未验证项 |
 | 对照完成效果 | 两个参考完成版的 README | 运行和只读复盘；在 starter 中编码时不读取相邻完成版 |
@@ -75,7 +75,7 @@ Word 用于课程概览和数据理解；具体环境命令、功能范围和验
 |---|---|---:|
 | [copilot-logistics-dashboard-starter](copilot-logistics-dashboard-starter/README.md) | 从空规格、需求与 mockup 开始生成 Dashboard | 8767 |
 | [copilot-logistics-dashboard](copilot-logistics-dashboard/README.md) | 结果参考：Dashboard 完成版 | 8766 |
-| [copilot-shipment-tracker-starter](copilot-shipment-tracker-starter/README.md) | 学员跟练：异常保存与重读 | 8769 |
+| [copilot-shipment-tracker-starter](copilot-shipment-tracker-starter/README.md) | 在现有异常队列上新增本机保存与确认 | 8769 |
 | [copilot-shipment-tracker](copilot-shipment-tracker/README.md) | 结果参考：异常跟进完成版 | 8768 |
 
 这是**一个 Git 仓库、四个独立应用目录**。每个案例有自己的依赖锁文件、环境、规格和指令。克隆一次即可；依赖安装、MCP 配置、Spec Kit 和启动命令都在选定案例目录内运行。
@@ -116,15 +116,15 @@ uv run --locked python tools/check_training.py
 
 接着按该目录 README 配置 MCP、验证工具与业务表，再启动页面。准备好进程环境变量后，只用 VS Code 打开**当前案例目录**；不要同时把工作坊根目录和完成版加入学员工作区。
 
-课堂按案例 README 的 Spec Kit 流程推进。Dashboard starter 的 specs 初始为空，bootstrap 不生成规格；先看需求与静态效果稿，再通过 specify、plan、tasks 逐步形成学员产物。起始版的 TODO 和 501 提示是预期状态。
+课堂按案例 README 的 Spec Kit 流程推进。两个 starter 的 specs 初始为空，bootstrap 不生成规格。Dashboard 从需求与 mockup 逐步构建看板；异常跟进在已有队列上生成新增功能规格，再补本机保存与确认。起始版的 TODO 和 501 提示是预期状态。
 
-第二个案例切换到 `copilot-shipment-tracker-starter`，单独安装依赖并恢复活动功能。四个案例可使用同一工作区的培训表，但凭据由使用者自行配置；异常操作仅保存至各自本机 SQLite。
+第二个案例切换到 `copilot-shipment-tracker-starter`，单独安装依赖并检查起点，再按提示词生成新增功能的规格。四个案例可使用同一工作区的培训表，但凭据由使用者自行配置；异常操作仅保存至各自本机 SQLite。
 
 ## 课堂路径
 
 1. **环境与依赖**（课前完成）：装工具、克隆、`uv sync`、bootstrap 与课堂检查。
 2. **Dashboard 案例**（课堂 15 分钟）：在起始版看 mockup、讨论需求，再逐步生成 spec/plan/tasks，并按本次 P1 范围实现查询、指标、筛选与对比图。
-3. **异常跟进案例**（课堂 15 分钟）：在起始版补 `save` 与前端 submit，验证状态流转与保存后重读。
+3. **异常跟进案例**（课堂 15 分钟）：参考新增功能 mockup，用 Spec Kit 形成保存与确认的规格、计划和任务，再补 `save` 与前端 submit，验证本机持久化及保存后重读。
 4. **复盘与验收**（其余时间）：只读解读 spec/plan/tasks，按各案例「验收」清单记录证据。
 
 > [!IMPORTANT]
