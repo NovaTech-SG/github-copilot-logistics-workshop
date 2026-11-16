@@ -2,7 +2,7 @@
 
 ## 从需求开始
 
-本项目只预装 Spec Kit、Python HTTP 服务、Databricks MCP 连接模块和页面骨架。初始 `specs/` 只有 `.gitkeep`，没有活动功能指针。没有 spec 是正常起点，不运行 bootstrap 来制造规格或恢复预置答案。
+本项目只预装 Spec Kit、Python HTTP 服务、Databricks MCP 连接模块和页面骨架。初始 `specs/` 只有 `.gitkeep`，没有活动功能指针。没有 spec 是正常起点；bootstrap 不生成规格。新克隆只有一份已写好的 spec 时，仅恢复其本机活动指针；多份未选择时提示人工选择。
 
 先读 `.specify/memory/constitution.md`、`docs/prompts.md` 和 `mockup/README.md`，再看 `mockup/index.html`。需求素材由讲师与学员调整；效果稿说明布局和目标，不能代替业务规则。
 

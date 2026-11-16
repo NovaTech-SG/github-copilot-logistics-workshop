@@ -8,7 +8,7 @@
 
 ## 按阶段新增功能
 
-1. 用户调用 `/speckit-specify` 后，针对本机保存与重读确认生成新功能规格。官方技能创建功能目录和 `.specify/feature.json`；bootstrap 不恢复旧规格。
+1. 用户调用 `/speckit-specify` 后，针对本机保存与重读确认生成新功能规格。官方技能创建功能目录和 `.specify/feature.json`；bootstrap 不生成规格；新克隆只有一份已写好的 spec 时仅恢复其本机活动指针，多份未选择时提示人工选择。
 2. 按用户指令逐步 clarify、plan、tasks、analyze、implement 和 converge。已有活动规格时按指针读取，保留学员自己的内容。
 3. 需求没有要求改变的读取、列表、详情、查询和页面布局保持现有行为。本次主要修改 `services/store.py` 的 `save`、`static/app.js` 的 submit，以及必要测试。
 4. 每步先报告产物或拟改任务与文件，完成当前阶段后停下，不自动跑完整个流程。任务 ID 以本次生成结果为准。

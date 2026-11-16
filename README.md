@@ -4,166 +4,61 @@ Nike GC Logistics · Session 2 · 90 分钟
 
 [![Workshop CI](https://github.com/NovaTech-SG/github-copilot-logistics-workshop/actions/workflows/ci.yml/badge.svg)](https://github.com/NovaTech-SG/github-copilot-logistics-workshop/actions/workflows/ci.yml)
 
-本仓库包含学员起始项目、参考完成版、培训模拟 CSV 和跟练文档。通过 SDD / Spec Kit、项目指令和 Databricks MCP，完成 Dashboard 与运输异常跟进两个本地应用。
+通过 Spec Kit 把业务需求逐步变成规格、计划、任务和可运行的本地应用。全部业务数据为培训模拟数据，不代表 Nike 实际运营情况。
 
-> [!NOTE]
-> 全部业务数据为培训模拟数据，不代表 Nike 实际运营情况。仓库不包含实际 Token，也不自动创建 Databricks 培训表。
+## 资料与下载
 
-## 客户资料与下载
-
-客户版 Word 直接保存在仓库根目录，随代码一起克隆或下载 ZIP 即可取得，也可以从下面的链接单独下载。
-
-| 资料 | 用途 | 获取方式 |
-|---|---|---|
-| Session 2 培训大纲 | 了解培训对象、90 分钟安排、两个案例和课前准备 | [下载 Word](<Nike GC Logistics Session 2 培训大纲.docx?raw=true>) |
-| Databricks 三张表业务表说明 | 理解三张表的业务对象、主要字段和关联，通过简化示例与只读查询完成练习 | [下载 Word](<Databricks 三张表业务表说明.docx?raw=true>) |
-| Databricks 培训模拟数据 | 查看承运商、运输单和运输异常三份 CSV，理解源表或准备导入数据 | [文件说明与 CSV](data/README.md) |
-| Dashboard 学员操作说明 | 安装依赖、配置 MCP、运行调试和完成第一个案例 | [在线阅读](copilot-logistics-dashboard-starter/README.md) |
-| 异常跟进学员操作说明 | 运行第二个案例、保存状态与备注、重读核对 | [在线阅读](copilot-shipment-tracker-starter/README.md) |
-
-建议先读培训大纲和三张表业务表说明，再进入选定学员项目的 README。学习笔记包含关系图、主要字段、状态与准时率说明，以及不附答案的查询练习。跟练时查该项目 `docs/prompts.md`；核对业务规则时查 `specs/` 下的 `spec.md` 和 `acceptance.md`。
-
-Word 用于课程概览和数据理解；具体环境命令、功能范围和验收以当前项目 README 与活动规格为准。[data/](data/README.md) 中附有三份培训模拟 CSV，培训源表由讲师在 Databricks 中准备，个人授权由使用者自行配置。课程应用通过 Databricks MCP 读取源表。
-
-三张表 Word 在仓库根目录统一维护，供客户下载。各应用的 `docs/data-source.md` 提供本项目内可读的数据来源与表关系，单独打开案例时，Copilot 先读这份说明。
-
-## Markdown 文档阅读顺序
-
-| 你现在要做什么 | 阅读位置 | 阅读重点 |
-|---|---|---|
-| 第一次开始 | 本页、选定学员项目的 `README.md` | 环境、个人授权、运行方式与当前练习起点 |
-| 理解课堂步骤 | 当前项目的 `docs/prompts.md` | Dashboard starter 从需求与 mockup 生成规格；逐步推进本次范围 |
-| 核对业务含义 | 当前功能的 `specs/`；两个 starter 初始先读 `docs/data-source.md`、`docs/prompts.md` 和 `mockup/` | 需求、数据字段、指标和状态规则；功能文档在课堂生成 |
-| 理解实现方案 | 同一功能下的 `plan.md`、`tasks.md`、`research.md`、`contracts/api.md` | 技术选择、任务顺序和接口约定 |
-| 验证自己的结果 | 当前项目 README 的验收章节 | 执行检查，在课堂笔记或 PR 中记录结果与未验证项 |
-| 对照完成效果 | 两个参考完成版的 README | 运行和只读复盘；在 starter 中编码时不读取相邻完成版 |
-
-`AGENTS.md`、`.github/copilot-instructions.md`、`.specify/memory/constitution.md` 是项目和 Agent 的规则。`.github/skills/`、`.specify/templates/` 是已配置的 Spec Kit 技能和模板；保留这些文件才能按文档继续跟练。`THIRD_PARTY_NOTICES.md` 保留第三方来源与许可。普通阅读先从上表开始，不需要逐一阅读所有工具文件。
-
-## 概览
-
-| 项 | 内容 |
+| 资料 | 用途 |
 |---|---|
-| 课程 | GitHub Copilot Session 2 · Nike GC Logistics |
-| 时长 | 90 分钟（课前准备约 30 分钟，另计） |
-| 形式 | 讲师演示 + 学员跟练 + 只读复盘 |
-| 案例 | 2 个应用 × 2 个版本（学员起始版、讲师完成版） |
-| 技术栈 | Python 3.12、uv、原生 HTML/CSS/JavaScript、Spec Kit 1.3.2 |
-| 数据来源 | Databricks SQL MCP，只读 `execute_sql_read_only` + `poll_sql_result` |
-| 本地状态 | 异常跟进的状态与备注只写各自本机 SQLite |
+| [Session 2 培训大纲 Word](<Nike GC Logistics Session 2 培训大纲.docx?raw=true>) | 培训目标、90 分钟安排和课前准备 |
+| [Databricks 三张表业务表说明 Word](<Databricks 三张表业务表说明.docx?raw=true>) | 业务对象、字段、关联和查询练习 |
+| [培训模拟 CSV](data/README.md) | 三张源表的静态示例，供理解数据和准备培训表 |
 
-## 你将构建
+Word 与 CSV 随代码一起下载。Databricks 培训表由讲师准备，使用者配置自己的访问授权；CSV 不会自动导入，也不作为应用运行时数据源。
 
-| 应用 | 做什么 | 端口 |
+## 选择项目
+
+| 项目 | 起点与目标 | 端口 |
 |---|---|---:|
-| Dashboard | 从 MCP 拉取运输单，算准时率，支持承运商筛选、对比图、趋势与分页明细 | 8767 / 8766 |
-| 异常跟进 | 读取运输异常，维护 `OPEN → IN_PROGRESS → RESOLVED` 跟进状态与备注，保存后重读确认 | 8769 / 8768 |
+| [Dashboard starter](copilot-logistics-dashboard-starter/README.md) | 从技术骨架、空 specs 和 mockup 开始，生成运输表现看板 | 8767 |
+| [异常跟进 starter](copilot-shipment-tracker-starter/README.md) | 在已有异常队列上新增 SQLite 保存和重读确认 | 8769 |
+| [Dashboard 完成版](copilot-logistics-dashboard/README.md) | 运行完整效果，复盘规格与实现 | 8766 |
+| [异常跟进完成版](copilot-shipment-tracker/README.md) | 运行完整效果，复盘保存与确认 | 8768 |
 
-每个应用都有学员起始版（端口较大）和讲师完成版（端口较小），代码与规格完全独立。
-
-## 学习目标
-
-- [ ] 用 Spec Kit 把业务描述变成可执行的 `spec.md` → `plan.md` → `tasks.md` → 实现
-- [ ] 通过 Databricks MCP 读取真实查询结果，并在应用里区分“源数据”与“本机记录”
-- [ ] 识别 Agent 越界：读取相邻完成版、扩大范围、用固定值兜底
-- [ ] 用离线检查、MCP 实测、页面验收三类证据区分“看起来完成”与“确实完成”
-- [ ] 在起始检查点与完成状态之间正确切换，并如实记录未验证项
-
-## 仓库结构
-
-| 目录 | 用途 | 端口 |
-|---|---|---:|
-| [copilot-logistics-dashboard-starter](copilot-logistics-dashboard-starter/README.md) | 从空规格、需求与 mockup 开始生成 Dashboard | 8767 |
-| [copilot-logistics-dashboard](copilot-logistics-dashboard/README.md) | 结果参考：Dashboard 完成版 | 8766 |
-| [copilot-shipment-tracker-starter](copilot-shipment-tracker-starter/README.md) | 在现有异常队列上新增本机保存与确认 | 8769 |
-| [copilot-shipment-tracker](copilot-shipment-tracker/README.md) | 结果参考：异常跟进完成版 | 8768 |
-
-这是**一个 Git 仓库、四个独立应用目录**。每个案例有自己的依赖锁文件、环境、规格和指令。克隆一次即可；依赖安装、MCP 配置、Spec Kit 和启动命令都在选定案例目录内运行。
-
-## 先决条件
-
-| 准备项 | 要求 |
-|---|---|
-| Git | 克隆仓库、查看改动 |
-| VS Code + GitHub Copilot | 能使用 Agent 聊天；组织策略允许 MCP 与 Skills |
-| uv | 管理 Python 3.12 和各案例独立的 `.venv` |
-| Node.js 22 | 前端 JavaScript 语法检查，无需 `npm install` |
-| Databricks 访问 | 讲师指定工作区、SQL MCP、培训表，以及 `sql` 作用域的凭据 |
+克隆一次后，在 VS Code 中只打开当前案例目录。四个应用各有自己的 `uv.lock` 和 `.venv`，依赖安装、启动和 Spec Kit 命令都在对应目录执行。
 
 ```powershell
-git --version
-uv --version
-node --version
-```
-
-> [!TIP]
-> 各案例 README 的「1. 先决条件」有更完整的检查清单与组织策略说明。
-
-## 从这里开始
-
-装好工具、拿到个人的 Databricks 访问方式后，克隆课程公开仓库并先选第一个学员项目：
-
-```powershell
-$GitHubOwner = 'NovaTech-SG'
-git clone "https://github.com/$GitHubOwner/github-copilot-logistics-workshop.git"
+git clone https://github.com/NovaTech-SG/github-copilot-logistics-workshop.git
 cd github-copilot-logistics-workshop/copilot-logistics-dashboard-starter
-
-uv python install 3.12
-uv sync --locked --python 3.12
-uv run --locked python tools/bootstrap_training.py
-uv run --locked python tools/check_training.py
 ```
 
-接着按该目录 README 配置 MCP、验证工具与业务表，再启动页面。准备好进程环境变量后，只用 VS Code 打开**当前案例目录**；不要同时把工作坊根目录和完成版加入学员工作区。
+继续按该项目 README 准备环境和连接。开发时只读当前 starter，完成后再对照参考完成版。
 
-课堂按案例 README 的 Spec Kit 流程推进。两个 starter 的 specs 初始为空，bootstrap 不生成规格。Dashboard 从需求与 mockup 逐步构建看板；异常跟进在已有队列上生成新增功能规格，再补本机保存与确认。起始版的 TODO 和 501 提示是预期状态。
+## 学员阅读顺序
 
-第二个案例切换到 `copilot-shipment-tracker-starter`，单独安装依赖并检查起点，再按提示词生成新增功能的规格。四个案例可使用同一工作区的培训表，但凭据由使用者自行配置；异常操作仅保存至各自本机 SQLite。
+1. 当前项目 `README.md`：准备环境、课堂步骤与验收。
+2. `docs/data-source.md`：Databricks MCP、三张表关系与业务规则。
+3. `mockup/index.html`：直接在浏览器查看静态目标效果。
+4. `docs/prompts.md`：复制一句话需求到 Copilot Agent，逐步调用 Spec Kit。
+5. 课堂生成的 `specs/`：审阅本次 spec、plan、tasks，再按任务实现。
+
+两个 starter 的 `specs/` 初始只有 `.gitkeep`。Spec Kit 技能、模板和项目原则已配置，不必重新 init，也不需要在课堂重建工具文件。`AGENTS.md` 和 `.github/` 供 Agent 使用；第三方来源与许可见各项目 `THIRD_PARTY_NOTICES.md`。
 
 ## 课堂路径
 
-1. **环境与依赖**（课前完成）：装工具、克隆、`uv sync`、bootstrap 与课堂检查。
-2. **Dashboard 案例**（课堂 15 分钟）：在起始版看 mockup、讨论需求，再逐步生成 spec/plan/tasks，并按本次 P1 范围实现查询、指标、筛选与对比图。
-3. **异常跟进案例**（课堂 15 分钟）：参考新增功能 mockup，用 Spec Kit 形成保存与确认的规格、计划和任务，再补 `save` 与前端 submit，验证本机持久化及保存后重读。
-4. **复盘与验收**（其余时间）：只读解读 spec/plan/tasks，按各案例「验收」清单记录证据。
-
-> [!IMPORTANT]
-> 两个案例的 15 分钟范围只覆盖 P1。趋势、分页、扩展校验等属于 P2，完成版包含但课堂不要求照搬。
-
-## 开始前的自查
-
-在自己的电脑和账号下完成以下检查，再进入课堂跟练：
-
-- Git、uv、Node.js 可用，VS Code 中的 Copilot Agent 已获授权。
-- 只打开当前学员项目，按该项目 README 安装依赖并运行 bootstrap 与课堂结构检查。
-- 在聊天斜杠菜单中确认本项目的 `/speckit-*` 技能可用。
-- 用自己的 Databricks 授权分别验证 Copilot MCP 和 Python 应用；成功连接后继续核对培训表权限。
-- 起始版的业务 TODO 和 501 提示是练习起点；实现后再按验收清单检查结果。
-
-## 故障排查
-
-| 现象 | 处理方法 |
+| 环节 | 本次范围 |
 |---|---|
-| `uv`、`git`、`node` 找不到 | 安装后重开终端检查 PATH；Python 用 `uv run`，不用系统 `python` |
-| MCP 服务器无法启动或显示灰点 | 工作区需已信任；VS Code 必须从设好 `DATABRICKS_HOSTNAME` 的终端启动；服务器需手动 Start |
-| 页面能开但数据接口报错 | 检查应用所在终端的环境变量与 Token；IDE 里的 Copilot 连接不代替应用凭据 |
-| 起始版页面提示未实现或 501 | 起始检查点的预期状态，实现 P1 后消失 |
+| 课前准备 | Windows PowerShell、Git、VS Code 与 Copilot Agent、uv、Node.js 22；分别验证 Copilot 和 Python 的 MCP 连接 |
+| Dashboard 15 分钟 | 需求 → spec → plan → tasks → P1 查询、四指标、筛选与对比图 |
+| 异常跟进 15 分钟 | 新功能 spec → plan → tasks → 本机保存、提交后重读、失败反馈与验证 |
+| 复盘与答疑 | 核对业务结果、解释实现、查看 PR 差异和 CI |
 
-各案例 README 的「故障排查」章节有完整清单（Token、OAuth、表权限、端口占用、结果截断等）。
+Dashboard 的趋势、自然日补零与明细分页属于 P2 扩展；异常跟进的状态校验和失败反馈属于本次保存功能。课程总时长和两个案例的时间安排不变。
 
-## PR 与 CI
+业务源表始终经 Databricks 只读 MCP 读取；异常跟进结果只写当前应用本机 SQLite。Token、`.env` 和本机数据库不提交。
 
-在仓库根目录创建分支和提交 PR；案例内的 `git diff -- .` 可查看当前案例改动。
+## 验证与协作
 
-根目录 [Workshop CI](.github/workflows/ci.yml) 用矩阵对四个项目分别运行结构、离线和语法检查，无 Databricks 凭据依赖，也不部署服务器。每个应用仍使用独立的 uv 环境，无根级 uv workspace。
+各项目 README 提供离线检查和实际操作清单。绿色 [CI](.github/workflows/ci.yml) 表示四个独立项目的结构、离线测试及 JavaScript 语法检查通过；它不访问现场 Databricks，也不部署服务器。学员仍需记录实际 MCP、页面操作和未验证项。
 
-starter 完成实现后，按其 README 更新课堂检查点，记录真实验收证据。
-
-## 参考
-
-- 案例文档：[Dashboard 完成版](copilot-logistics-dashboard/README.md) · [Dashboard 学员版](copilot-logistics-dashboard-starter/README.md) · [异常跟进完成版](copilot-shipment-tracker/README.md) · [异常跟进学员版](copilot-shipment-tracker-starter/README.md)
-- [uv 安装](https://docs.astral.sh/uv/getting-started/installation/)
-- [VS Code MCP 配置与首次工具验证](https://code.visualstudio.com/docs/agent-customization/mcp-servers)
-- [Spec Kit 的 Copilot Skills 集成](https://github.github.io/spec-kit/integrations/copilot.html)
-
-第三方 Spec Kit 材料的来源与许可见各案例目录的 `THIRD_PARTY_NOTICES.md`。客户版 Word 保存在仓库根目录，可从本页的下载入口获取。
+完成本次练习后先检查 `git diff -- .`，再按课堂安排提交分支与 PR。

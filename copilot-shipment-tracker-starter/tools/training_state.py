@@ -4,15 +4,9 @@ from pathlib import Path
 import re
 
 
-def active_feature(root):
+def resolve_feature(root, directory):
+    """Validate a selection before reading it or restoring a local pointer."""
     root = Path(root).resolve()
-    pointer = root / '.specify/feature.json'
-    if not pointer.exists():
-        if any((root / 'specs').glob('*/spec.md')):
-            raise ValueError('Specs exist but no active feature is selected. Restore .specify/feature.json; existing work was preserved.')
-        return None
-    active = json.loads(pointer.read_text(encoding='utf-8-sig'))
-    directory = active.get('feature_directory')
     if not isinstance(directory, str) or not directory.strip():
         raise ValueError('feature.json must contain a nonempty feature_directory')
     feature = (root / directory).resolve()
@@ -22,6 +16,17 @@ def active_feature(root):
     if not spec.is_file() or not spec.read_text(encoding='utf-8-sig').strip():
         raise ValueError('Active feature has no written spec.md; existing pointer was preserved for review')
     return feature
+
+
+def active_feature(root):
+    root = Path(root).resolve()
+    pointer = root / '.specify/feature.json'
+    if not pointer.exists():
+        if any((root / 'specs').glob('*/spec.md')):
+            raise ValueError('Specs exist but no active feature is selected. Run tools/bootstrap_training.py; for multiple features, select one in .specify/feature.json. Existing work was preserved.')
+        return None
+    active = json.loads(pointer.read_text(encoding='utf-8-sig'))
+    return resolve_feature(root, active.get('feature_directory'))
 
 
 def inspect_stage(root):

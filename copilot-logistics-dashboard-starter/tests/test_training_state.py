@@ -73,12 +73,33 @@ class TrainingStateTests(unittest.TestCase):
         self.assertEqual(self.pointer.read_bytes(), pointer_before)
         self.assertEqual((feature / 'spec.md').read_bytes(), spec_before)
 
-    def test_missing_selection_does_not_silently_choose_or_overwrite_work(self):
+    def test_fresh_clone_restores_only_sole_learner_feature_selection(self):
         feature = self.feature()
+        (feature / 'plan.md').write_text('# Learner plan', encoding='utf-8')
+        (feature / 'tasks.md').write_text('- [ ] T001 Implement P1\n', encoding='utf-8')
+        before = {path.name: path.read_bytes() for path in feature.iterdir()}
         self.pointer.unlink()
-        with self.assertRaisesRegex(ValueError, 'no active feature'):
+        self.assertEqual(self.run_bootstrap(), {'status': 'restored_selection', 'feature': 'specs/003-learner-dashboard'})
+        self.assertEqual(inspect_stage(self.root)['stage'], 'tasks-generated')
+        self.assertEqual(self.run_bootstrap()['status'], 'preserved')
+        self.assertEqual({path.name: path.read_bytes() for path in feature.iterdir()}, before)
+
+    def test_multiple_features_without_selection_are_not_chosen_or_overwritten(self):
+        feature = self.feature()
+        other = self.feature('specs/004-another-feature')
+        self.pointer.unlink()
+        with self.assertRaisesRegex(ValueError, 'Multiple specs'):
             self.run_bootstrap()
         self.assertEqual((feature / 'spec.md').read_text(encoding='utf-8'), SPEC)
+        self.assertEqual((other / 'spec.md').read_text(encoding='utf-8'), SPEC)
+        self.assertFalse(self.pointer.exists())
+
+    def test_unwritten_spec_does_not_get_a_restored_selection(self):
+        feature = self.feature()
+        self.pointer.unlink()
+        (feature / 'spec.md').write_text('  ', encoding='utf-8')
+        with self.assertRaisesRegex(ValueError, 'no written spec'):
+            self.run_bootstrap()
         self.assertFalse(self.pointer.exists())
 
     def test_invalid_selection_stays_untouched(self):
