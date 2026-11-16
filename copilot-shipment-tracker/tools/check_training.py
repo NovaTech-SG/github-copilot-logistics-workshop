@@ -28,8 +28,8 @@ def main():
         text = skill.read_text(encoding="utf-8")
         assert 'author: "github-spec-kit"' in text, name
         assert "disable-model-invocation: true" in text, name
-    for alias, destination in (("spec.md", "spec.md"), ("tasks.md", "tasks.md")):
-        assert config["feature_directory"] + "/" + destination in (root / "docs" / alias).read_text(encoding="utf-8")
+    for guide in ("data-source.md", "prompts.md"):
+        assert (root / "docs" / guide).is_file(), guide
     tasks = (feature / "tasks.md").read_text(encoding="utf-8")
     lines = [line for line in tasks.splitlines() if re.match(r"- \[[ xX]\] T\d+", line)]
     assert len(lines) >= 10, "Missing executable tasks"

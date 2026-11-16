@@ -4,7 +4,7 @@
 
 **从这个仓库开始跟练。** 对应完成版目录为 `copilot-logistics-dashboard`，留作课后核对；课堂请只打开本案例目录，不让 Agent 读取相邻完成版。课件中的 `logistics-dashboard-starter` 是本案例简称。
 
-连接模块和本地服务已提供，业务查询、指标整理、筛选与图表由学员完成。
+从需求与静态效果稿开始。初始 `specs/` 只有 `.gitkeep`，不附带 spec、plan 或 tasks；课堂用 Spec Kit 逐步生成，再实现业务。MCP 连接模块、本地服务与页面骨架已提供。
 
 > [!IMPORTANT]
 > 起始版页面能打开、但 `/api/dashboard` 返回 **501**，属于**预期状态**，不是 MCP 认证失败。完成 P1 后才会出现真实指标。
@@ -17,42 +17,43 @@
 | 角色 | 学员起始项目（对应完成版：`copilot-logistics-dashboard`） |
 | 预计用时 | 课前准备约 30 分钟；课堂 15 分钟 |
 | 默认地址 | <http://127.0.0.1:8767> |
-| 已提供 | MCP 连接模块、本地 HTTP 服务、页面骨架 |
+| 已提供 | 需求提示词、静态 mockup、MCP 连接模块、本地 HTTP 服务、页面骨架 |
 | 需要完成 | P1：`services/queries.py` 的业务 SQL、`services/dashboard.py` 的指标整理、`static/` 的指标卡/筛选/对比图 |
 | 数据来源 | Databricks SQL MCP，只读：`execute_sql_read_only` + `poll_sql_result` |
 
 推荐顺序：先决条件 → 获取代码与依赖 → 快速开始 → 配置 Databricks MCP → 运行与调试 → Spec Kit 跟练 → 验收。
 
 > [!NOTE]
-> 没有 Databricks 凭据时，仍可阅读规格、完成依赖安装和离线检查；页面业务数据及保存后重读验收需要实际 MCP 连接。
+> 没有 Databricks 凭据时，仍可查看 mockup、讨论需求、生成规格、安装依赖和运行离线检查；实际业务数据和页面验收需要 MCP 连接。
 
 ## 学习目标
 
-- [ ] 能在 VS Code 里让 Agent 按 `spec.md` → `plan.md` → `tasks.md` 的顺序推进实现
+- [ ] 从需求与 mockup 生成 `spec.md`，再经 `plan.md` → `tasks.md` 分轮实现
 - [ ] 用一条只读 SQL 算出总量、有效分母、准时量与准时率，并解释排除规则
 - [ ] 让筛选后的指标、对比图与明细使用同一数据范围
 - [ ] 查询失败时明确报错，不用固定值或聊天结果兜底
-- [ ] 完成 P1 后把 `.specify/training.json` 的 `checkpoint` 改为 `learner-implemented` 并记录真实验证结果
+- [ ] 能区分当前文档阶段与业务完成程度，记录自己的实际验收结果
 
 ## 本项目文档怎么读
 
-- 先按本 README 完成环境、个人授权和运行步骤。
-- 跟练或复盘时看 [Spec Kit 操作说明](docs/speckit.md) 与 [聊天提示词](docs/prompts.md)。
-- 业务含义与计算口径看 [规格入口](docs/spec.md)，具体步骤看 [任务入口](docs/tasks.md)。
-- 用 [验证记录模板](docs/validation.md) 记录自己实际执行的检查与结果。
-- `AGENTS.md`、`.github/` 和 `.specify/` 中的技能、规则与模板用于维持项目操作约定，保留原位置。
+`docs/` 只保留两份：
+
+- [data-source.md](docs/data-source.md)：Databricks MCP、三张业务表、关联字段及数据使用规则。
+- [prompts.md](docs/prompts.md)：按顺序发送到 Copilot 的 Spec Kit 提示词。
+
+环境配置、启动、调试和验收均看本 README。功能规格、计划和任务以本项目 `specs/` 中的实际产物为准。
 
 ## 目录
 
 | 章节 | 内容 | 用时 |
 |---|---|---|
 | [1. 先决条件](#1-先决条件) | 工具、账号与网络 | 首次约 10 分钟 |
-| [2. 获取代码与依赖](#2-获取代码与依赖) | 克隆、`uv sync`、课堂功能恢复 | 约 10 分钟 |
+| [2. 获取代码与依赖](#2-获取代码与依赖) | 克隆、`uv sync`、起点检查 | 约 10 分钟 |
 | [3. 快速开始](#3-快速开始) | 确认起始状态正常 | 约 2 分钟 |
 | [4. 配置 Databricks MCP](#4-配置-databricks-mcp) | 数据权限、凭据、Copilot 验证 | 约 10 分钟 |
 | [5. 运行与调试](#5-运行与调试) | 终端、`start.ps1`、F5 断点 | 约 2 分钟 |
-| [6. Spec Kit 跟练](#6-spec-kit-跟练) | 课堂四步与 `implement` 提示词 | 约 5 分钟 |
-| [7. 验收](#7-验收) | 离线检查、业务数值、检查点更新 | 约 8 分钟 |
+| [6. Spec Kit 跟练](#6-spec-kit-跟练) | 从需求生成规格并分轮实施 | 约 5 分钟 |
+| [7. 验收](#7-验收) | 离线检查、业务数值、阶段确认 | 约 8 分钟 |
 | [8. 故障排查](#8-故障排查) | 常见现象与处理 | 按需 |
 | [9. 目录结构与参考](#9-目录结构与参考) | 文件导航与官方链接 | 参考 |
 
@@ -98,8 +99,8 @@ uv run --locked python tools/check_training.py
 
 | 命令 | 预期输出 |
 |---|---|
-| `bootstrap_training.py` | 首次 `restored`，再次运行 `preserved` |
-| `check_training.py` | `ready` |
+| `bootstrap_training.py` | 未生成规格时 `awaiting_specification`；有有效活动规格时 `preserved` |
+| `check_training.py` | `ready`，初始 `stage: requirements` |
 | `speckit.ps1 integration status --json` | `status: ok`，无缺失或被改写的官方文件 |
 
 这三项都**不验证** MCP 连接或页面业务。
@@ -107,11 +108,13 @@ uv run --locked python tools/check_training.py
 > [!NOTE]
 > 仓库已预装 **官方 Spec Kit 1.3.2** 的 Copilot Skills 和模板。`.\tools\speckit.ps1` 通过 uv 调用固定 CLI，首次可能需要下载；不用额外安装全局 `specify`，也不要重新执行 `specify init --force`。
 
-当前功能为 `specs/001-carrier-dashboard`。Spec Kit 忽略本机活动指针 `.specify/feature.json`，bootstrap 依据已提交的 `.specify/training.json` 恢复它，并保留已有有效选择。`uv sync --locked` 生成本案例目录自己的 `.venv`；后续命令都在本案例目录内运行。
+初始没有活动功能。bootstrap 只检查起点，既不创建规格，也不写 `.specify/feature.json`。课堂 `/speckit-specify` 创建功能目录与指针；示例名称为 `specs/001-carrier-dashboard`。已有有效活动选择会保留。`uv sync --locked` 生成本案例目录自己的 `.venv`；后续命令都在本案例目录内运行。
 
 ## 3. 快速开始
 
 前提：已完成第 1、2 节。以下命令都在本案例目录内执行。
+
+**先看效果稿**：直接用浏览器打开 `mockup/index.html`。它不需要凭据或 Python 服务，所有数字均为静态样例，筛选与分页不可操作。正式练习页仍使用 `static/`。
 
 **1）提供凭据**（最小集，来源说明见 [4.2](#42-提供凭据)）
 
@@ -319,34 +322,26 @@ uv run --locked python app.py
 
 ## 6. Spec Kit 跟练
 
-SDD（Specification-Driven Development，规格驱动开发）先把需求、边界和验收写清楚，再据此计划、拆任务、实现和验证。Spec Kit 提供相应模板与 Agent Skills；它不会替你判断业务口径，也不以文档齐全或任务勾选代替运行验收。
+从 [需求提示词](docs/prompts.md) 与 [mockup](mockup/README.md) 开始。先讨论页面解决什么业务问题，再在 Copilot Agent 聊天中逐步生成文档、实现和验收。
 
-| 先读的文件 | 用途 |
-|---|---|
-| [AGENTS.md](AGENTS.md) | Agent 的项目范围、凭据与数据边界 |
-| [constitution](.specify/memory/constitution.md) | 项目原则 |
-| [spec.md](specs/001-carrier-dashboard/spec.md) | 要做什么、业务规则与验收条件 |
-| [plan.md](specs/001-carrier-dashboard/plan.md) | 怎样实现、沿用哪些组件 |
-| [tasks.md](specs/001-carrier-dashboard/tasks.md) | 按依赖推进的任务与课堂范围 |
-| [完整课堂提示词](docs/prompts.md) | 可逐条复制到 Copilot 的技能调用 |
-| [Spec Kit 操作说明](docs/speckit.md) | 版本、检查点及课前准备说明 |
+| 顺序 | 操作 | 审阅后再继续 |
+|---|---|---|
+| 1 | 补充需求提示词，查看 mockup | 目标、指标含义、P1 与 P2 |
+| 2 | `/speckit-specify` | 新生成的 spec、场景与验收条件 |
+| 3 | 必要时 `/speckit-clarify` | 分母、边界和失败行为 |
+| 4 | `/speckit-plan` | 复用技术骨架，确认接口与实施范围 |
+| 5 | `/speckit-tasks`，再 `/speckit-analyze` | 依赖、任务分组、必要测试与一致性 |
+| 6 | 第一轮 `/speckit-implement` | 仅 P1 后端查询、指标与必要测试 |
+| 7 | 第二轮 `/speckit-implement` | P1 前端指标、筛选、对比图和状态反馈 |
+| 8 | 按 P1 `/speckit-converge` 并验收 | 实际结果与已知扩展范围 |
 
-这些规格、计划和任务是课前准备的检查点，不是已执行成功的 Copilot 对话记录。学员不需要在 15 分钟内从零重建全部材料。
+[课堂提示词](docs/prompts.md) 已包含每一步需要发送的消息。命令在聊天中分别调用，不在终端执行，也不一次连跑全部步骤。
 
-在 VS Code 的 Copilot Agent 聊天中输入 `/`，确认能选择 `/speckit-specify`、`/speckit-plan`、`/speckit-tasks`、`/speckit-implement` 等。此项目的技能需手动调用；**下面的斜杠命令是聊天消息，不是终端命令**。CLI 的 `integration status` 通过也不能证明 IDE 已发现技能。
+初始功能文档不存在。官方 specify 技能创建功能目录、spec 与 `.specify/feature.json`；plan 与 tasks 在后续步骤生成。以实际活动指针和生成的任务 ID 为准，不预设 Phase 1 至 3 或某个 T015。
 
-课堂按下面顺序推进，每步先看结果与文件差异，再继续：
+P1 是四指标、承运商筛选与清除、准时率对比图及加载、空结果和错误反馈。趋势、自然日补零、明细分页为 P2，mockup 中展示也不要求首轮全部实现。现有可复用接口见 [数据来源说明](docs/data-source.md)。
 
-1. 讲师用 `/speckit-specify` 展示从业务描述更新规格；有未确认边界时再 `/speckit-clarify`。无新歧义可以直接结束澄清。
-2. 阅读预置 `plan.md`、`tasks.md`。`/speckit-plan`、`/speckit-tasks` 的完整再生成可在课前或课后练习，课堂直接使用已核对的检查点。
-3. 用下面的 `/speckit-implement` 只实现本次范围。若 Agent 扩大范围或准备读取完成版，先停止并纠正计划。
-4. 按[第 7 节](#7-验收)验收，再使用 `docs/prompts.md` 中的 `/speckit-analyze` 检查文档一致性、`/speckit-converge` 查实现缺口；明确限定本次范围。
-
-```text
-/speckit-implement 只执行当前功能 Phase 1 至 Phase 3 的 P1 任务及 T015 的必要收尾，不执行 P2。先列拟改文件，复用已有 MCP 连接模块，实现指标、承运商筛选、清除和对比图，并补必要测试。 当前活动功能为 specs/001-carrier-dashboard。先读 AGENTS.md、constitution、spec、plan 和 tasks。仅在当前仓库工作，不读取相邻完成版；运行时从只读 MCP 获取真实结果，不回写 Databricks，不硬编码聊天结果。报告实际执行和未验证项目，不自动提交、推送或部署。
-```
-
-**15 分钟范围：** `services/queries.py` 的 P1 SQL、`services/dashboard.py` 的调用整理、`static/` 的指标/筛选/对比图和必要测试。趋势、日期补零、明细分页属于 P2；完成版包含这些扩展，课堂不要求全部照搬。接口约定见 [data-contract](docs/data-contract.md)。
+课堂时间沿用原安排，先完成本次 P1 范围，P2 留作扩展。
 
 ## 7. 验收
 
@@ -355,11 +350,13 @@ SDD（Specification-Driven Development，规格驱动开发）先把需求、边
 不需要 Databricks 凭据：
 
 ```powershell
-uv run --locked python -m compileall -q app.py services
+uv run --locked python tools/check_training.py
+uv run --locked python -m unittest discover -s tests -v
+uv run --locked python -m compileall -q app.py services tools
 node --check static/app.js
 ```
 
-起始版仅做结构、Python 编译与 JavaScript 语法检查；实现 P1 后应新增业务测试，再运行 `uv run --locked python -m unittest discover -s tests -v`。
+起始测试覆盖空规格起点、阶段推进、活动指针保护和非法状态。它们不替代 P1 业务测试；实现本次功能时再补指标、筛选、失败等测试。
 
 ### 7.2 实际业务验收
 
@@ -370,29 +367,34 @@ node --check static/app.js
 | 查询全部 | 运输单 500、有效分母 380、准时 304、延误 76、排除 120、准时率 80.00% |
 | 筛选 CAR002 | 运输单 134、有效分母 104、准时 77、延误 27、准时率 74.04%；指标与对比图范围同步 |
 | 清除筛选 | 恢复全部范围 |
-| 验证零分母 | 返回 `null`、显示 `N/A`，不能显示 0%；课堂先用离线用例验证，接口/扩展验证见 acceptance |
+| 验证零分母 | 返回 `null`、显示 `N/A`，不能显示 0%；课堂先用离线用例验证，接口与扩展验证以课堂确认的 spec 为准 |
 | 查询失败 | 明确提示错误，不保留旧数据冒充成功，不使用固定值兜底 |
 
 准时率只对 `DELIVERED` 且计划/实际到达时间均非空的运输单计算；实际不晚于计划算准时，时间相等也算。整体比例用总准时量 / 总有效分母，不平均承运商百分比，也不关联多条异常放大运输单数。
 
-把实际执行、结果和未验证项写入 [docs/validation.md](docs/validation.md)。详细场景见 [acceptance.md](specs/001-carrier-dashboard/acceptance.md)。`ready`、离线测试通过、MCP 成功和页面验收是不同证据，分别记录。
+按上面的清单核对，在本次课堂笔记或 PR 说明中记录实际执行、结果和未验证项。详细场景以本次生成且经核对的 spec 为准；上表用于培训快照核对，不是运行时数据源。`ready`、离线测试通过、MCP 成功和页面验收是不同证据，分别记录。
 
-### 7.3 提交前更新课堂检查点
+完成 P2 后再检查：
 
-起始版的 `check_training.py` 会在 `checkpoint` 为 `learner-start` 时确认核心业务仍保留 `NotImplementedError`。所以它适合课前检查；完成实现后若仍用这个标记，检查或 CI 可能因 TODO 已消失而失败。
+- 趋势按业务日期展示，缺失自然日补零，趋势合计与当前范围运输单量一致。
+- 明细每页 20 条，相邻页不重复；筛选改变时回到第 1 页。
+- 培训快照中，全部 500 单共 25 页；CAR002 共 7 页，末页 14 条。实际源表变化后重新核对。
+- 快照与本次查询完成时间分别标注，按 Asia/Shanghai 显示；空时间不显示为 1970 年。
+- 桌面和窄屏均能筛选、翻页和查看图表，页面整体不横向溢出。
 
-**完成本次 P1 并记录实际验证结果后**，在当前案例的 `.specify/training.json` 中只把 `checkpoint` 字段从 `learner-start` 改为 `learner-implemented`，保留其他字段，再运行：
+### 7.3 确认当前课堂阶段
 
 ```powershell
 uv run --locked python tools/check_training.py
 ```
 
-> [!WARNING]
-> 该标记表示已离开起始检查点，只取消“业务应尚未实现”的检查，**不代表业务自动验收通过**。不要保留无用的 `NotImplementedError` 来满足旧检查，也不要在未实现时改标记冒充完成；P1 的测试、MCP 查询和页面操作仍按上述清单核对，未验证项如实记录。Dashboard 的 P2 可继续保持待办。
+检查识别 `requirements → specified → planned → tasks-generated`，只要求当前阶段应有的文件。初始没有 spec 正常；仅生成 spec 时也不要求 plan/tasks 已存在。已经有任务却缺 plan、指针指向项目外或丢失已有规格的活动选择时，会报错并保留原文件。
+
+不需要手改 checkpoint 来取消起始 TODO 检查。业务实现是否完成仍看任务、测试、实时查询和页面验收；`ready` 不等于业务通过。
 
 ### 7.4 PR 与 CI
 
-完成跟练后先 `git diff -- .` 审查改动、凭据和业务范围，再按讲师安排提交分支与 PR。工作坊根目录的 [CI](../.github/workflows/ci.yml) 在 push/PR 时恢复活动功能、检查课堂结构、运行离线检查及 JavaScript 语法检查。它不使用 Databricks Token、不查询现场数据、不部署服务器；绿色 CI 不能代替真实 MCP 和浏览器验收。
+完成跟练后先 `git diff -- .` 审查改动、凭据和业务范围，再按讲师安排提交分支与 PR。工作坊根目录的 [CI](../.github/workflows/ci.yml) 在 push/PR 时检查当前课堂阶段、运行离线测试及 JavaScript 语法检查，不生成或恢复功能规格。它不使用 Databricks Token、不查询现场数据、不部署服务器；绿色 CI 不能代替真实 MCP 和浏览器验收。
 
 ## 8. 故障排查
 
@@ -401,8 +403,8 @@ uv run --locked python tools/check_training.py
 | `uv`、`git`、`node` 找不到 | 安装后重开终端，检查 PATH；Python 用 `uv run`，不用系统 `python` 代替 |
 | uv 下载失败或证书错误 | 检查公司代理、PyPI 与 Python 下载访问；按组织证书方案配置，不关闭 TLS 验证 |
 | PowerShell 拒绝 `.ps1` | 若是 ZIP 解压文件，检查文件阻止属性；按公司批准的脚本执行策略处理，受管电脑请联系 IT。Python 的 bootstrap/check 命令可先单独执行 |
-| `feature.json` 不存在 | 运行 `uv run --locked python tools/bootstrap_training.py`；它恢复当前课堂功能，不覆盖有效选择 |
-| `check_training.py` 不通过 | 先看报错中的文件或功能目录。起始检查点要求业务仍保留 `NotImplementedError`；实现完成后需按 [7.3](#73-提交前更新课堂检查点) 更新标记 |
+| `feature.json` 不存在 | 初始正常；运行课堂 specify 后由技能创建。若已有 spec，则核对活动选择，不自动覆盖学员成果 |
+| `check_training.py` 不通过 | 先看具体文件和阶段。核对指针、spec、plan、tasks 的生成顺序，按 [7.3](#73-确认当前课堂阶段) 检查；不要求保留旧 TODO 或手改标记 |
 | `/api/dashboard` 返回 501 | 起始版的预期状态，业务尚未实现；完成 P1 后应返回指标 JSON |
 | `/speckit-*` 不显示 | 确认只打开本案例目录、当前会话支持 `.github/skills`、Copilot 可用且组织允许；重载窗口并检查 IDE 的技能发现能力。不要重跑 init 覆盖材料 |
 | 缺少 Token 或提示未展开变量 | 应用本身不读 `.env`：终端启动看环境变量，F5 由 `.vscode/launch.json` 的 `envFile` 注入。`${input:...}` 只能由 IDE 展开，Python 不支持 |
@@ -432,9 +434,8 @@ uv run --locked python tools/check_training.py
 | `services/queries.py` | 业务 SQL（**待实现**） |
 | `services/dashboard.py` | 指标整理与一致性检查（**待实现**） |
 | `static/` | 原生 HTML/CSS/JavaScript（**指标与图表待实现**） |
-| `specs/001-carrier-dashboard/` | 当前功能的规格、计划、任务、数据模型与验收 |
-| `docs/spec.md` / `docs/tasks.md` | 指向当前功能文件的兼容入口 |
-| `docs/data-contract.md` | 前端与后端的数据约定 |
+| `specs/` | 初始只有 `.gitkeep`；课堂生成各功能规格、计划、任务和设计产物 |
+| `mockup/` | 可直接打开的静态完成效果参考，不参与运行时数据获取 |
 | `tools/bootstrap_training.py` / `tools/check_training.py` | 首次克隆准备与课堂结构检查 |
 
 各案例独立安装依赖、运行与保存练习结果。`.venv`、实际凭据、`data/` 与本机活动指针不提交到 Git。第三方 Spec Kit 材料的来源和许可见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。

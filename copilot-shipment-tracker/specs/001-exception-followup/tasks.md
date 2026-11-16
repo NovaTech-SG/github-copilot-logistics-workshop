@@ -23,7 +23,7 @@
 **Independent Test**: 空备注、超长备注、非法流转、过期状态分别拒绝。
 - [ ] T008 [US2] 在tests/test_tracker.py补拒绝非法输入、过期原状态与失败无部分写入的检查，对应FR-002、FR-003、FR-007。
 - [ ] T009 [US2] 核对services/store.py、app.py既有错误映射；在static/app.js中完成失败、尚未确认与防重复提交反馈，对应FR-005、FR-007、FR-008。
-- [ ] T010 [US2] 按quickstart.md实际保存、重新读取、刷新与重启同一数据库；在docs/validation.md记录结果与未验证项，对应FR-009。
+- [ ] T010 [US2] 按quickstart.md实际保存、重新读取、刷新与重启同一数据库；在README.md 的验收清单记录结果与未验证项，对应FR-009。
 
 ## Phase 5: Polish & Cross-cutting
 - [ ] T011 检查README.md、AGENTS.md、活动规格、凭据与数据库排除，再运行离线检查。

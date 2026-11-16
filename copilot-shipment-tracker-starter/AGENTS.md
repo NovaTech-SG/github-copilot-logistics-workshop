@@ -4,11 +4,11 @@ GitHub首次克隆后，如`.specify/feature.json`不存在，先运行`uv run -
 
 ## Spec Kit活动功能
 
-活动功能由`.specify/feature.json`记录，当前为`specs/001-exception-followup`。优先读取该目录spec.md、plan.md、tasks.md和`.specify/memory/constitution.md`。docs/spec.md与docs/tasks.md只是兼容入口。
+活动功能由`.specify/feature.json`记录，当前为`specs/001-exception-followup`。优先读取该目录spec.md、plan.md、tasks.md和`.specify/memory/constitution.md`。
 
 使用本项目官方Copilot skills，逐步执行`/speckit-specify`、`/speckit-clarify`（有歧义时）、`/speckit-plan`、`/speckit-tasks`、`/speckit-implement`和`/speckit-converge`。当前为学员起始检查点，保留尚未完成的业务任务。课堂P1范围见tasks.md，不自动扩展P2。预置产物与任务勾选不作为真实运行证据。不要自动安装其他扩展、提交、推送或部署。
 
-先读docs/spec.md和docs/tasks.md，解释业务规则并列改动计划，再开始实现。
+先读specs/001-exception-followup/spec.md和specs/001-exception-followup/tasks.md，解释业务规则并列改动计划，再开始实现。
 
 - 仅在当前学员项目开发，不搜索父目录或相邻完成版。
 - 本阶段只完成services/store.py的save和static/app.js的表单submit处理，再补相应测试。复用已提供的连接、查询、校验、建表、overlay和api函数。
@@ -19,3 +19,7 @@ GitHub首次克隆后，如`.specify/feature.json`不存在，先运行`uv run -
 - Token只在后端，数据库和凭据不入Git。Python3.12与uv，前端保持原生实现。
 - 完成后运行离线测试和node --check static/app.js，如实记录实际查询、页面验证和未完成项。
 - 不自行提交、推送、部署或增加CD。
+
+## 数据来源与表关系
+
+先读本项目 `docs/data-source.md`，核对 Databricks 只读 MCP、三张表的关联键和本项目使用范围。CSV 与效果稿只是参考，不是应用运行时数据源。

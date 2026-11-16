@@ -4,11 +4,11 @@ GitHub首次克隆后，如`.specify/feature.json`不存在，先运行`uv run -
 
 ## Spec Kit活动功能
 
-活动功能由`.specify/feature.json`记录，当前为`specs/001-exception-followup`。优先读取该目录spec.md、plan.md、tasks.md和`.specify/memory/constitution.md`。docs/spec.md与docs/tasks.md只是兼容入口。
+活动功能由`.specify/feature.json`记录，当前为`specs/001-exception-followup`。优先读取该目录spec.md、plan.md、tasks.md和`.specify/memory/constitution.md`。
 
 使用本项目官方Copilot skills，逐步执行`/speckit-specify`、`/speckit-clarify`（有歧义时）、`/speckit-plan`、`/speckit-tasks`、`/speckit-implement`和`/speckit-converge`。当前为讲师完成版，只有明确要求修改业务时才执行implement；通常作只读复盘。课堂P1范围见tasks.md，不自动扩展P2。预置产物与任务勾选不作为真实运行证据。不要自动安装其他扩展、提交、推送或部署。
 
-本项目是Session 2第二个案例的完成版。先阅读docs/spec.md，再给出改动计划和验收方式。
+本项目是Session 2第二个案例的完成版。先阅读specs/001-exception-followup/spec.md，再给出改动计划和验收方式。
 
 - Python 3.12、uv、原生HTML/CSS/JavaScript。依赖变更同步更新uv.lock。
 - 源数据仅从Databricks MCP读取。只调用execute_sql_read_only与poll_sql_result，不调用写入工具，不用CSV或固定数据兜底。
@@ -18,3 +18,7 @@ GitHub首次克隆后，如`.specify/feature.json`不存在，先运行`uv run -
 - Token仅后端使用，不输出、不提交、不进前端。数据库、虚拟环境、QA输出不入Git或学员包。
 - 改动后运行uv run --locked python -m unittest discover -s tests -v与node --check static/app.js。实际MCP、浏览器检查、远程CI分别报告。
 - 本地运行，不部署、不增加CD、不修改相邻仓库。
+
+## 数据来源与表关系
+
+先读本项目 `docs/data-source.md`，核对 Databricks 只读 MCP、三张表的关联键和本项目使用范围。CSV 与效果稿只是参考，不是应用运行时数据源。

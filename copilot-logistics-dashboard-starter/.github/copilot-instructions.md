@@ -1,9 +1,9 @@
-GitHub首次克隆后，如`.specify/feature.json`不存在，先运行`uv run --locked python tools/bootstrap_training.py`，再定位当前活动规格。不要覆盖已有有效的功能选择。
+数据来源与表关系先读本项目 `docs/data-source.md`。运行时通过 Databricks 只读 MCP 获取业务源表；按表关系与本次范围生成规格和实现。
 
-遵守根目录AGENTS.md和.specify/memory/constitution.md。活动需求、计划与任务以.specify/feature.json指向的`specs/001-carrier-dashboard`为准。Spec Kit课堂步骤见docs/speckit.md与docs/prompts.md。
+# Dashboard 从需求开始的课堂约定
 
-# 跟练说明
+遵守本项目 `AGENTS.md` 和 `.specify/memory/constitution.md`。初始 `specs/` 为空，没有预置 spec、plan、tasks 或活动功能指针。
 
-遵守根目录 `AGENTS.md`。读取 `docs/spec.md` 明确业务口径，按 `docs/tasks.md` 完成当前阶段。先计划，再小步实现与验收。
+先读 `docs/prompts.md` 和 `mockup/README.md`。由用户逐条调用 `/speckit-specify`、需要时 clarify、plan、tasks，再按生成的任务实现。生成规格之前不要开始业务编码，也不要跳去读取相邻完成版、内部资料或 Git 历史中的答案。
 
-请在本项目内独立实现，不搜索相邻完成版。复用已提供的MCP连接模块；运行时后端必须调用真实MCP。Token不进前端或仓库。指标数值用于验收，不可硬编码到业务实现。只在用户要求的阶段追加扩展功能。
+`mockup/index.html` 是静态效果参考，固定样例不能用作应用数据。复用本项目只读 MCP 与启动骨架，Token 仅后端使用。按 README 验收，在本次课堂记录中如实说明结果，下一步由课堂指令决定。

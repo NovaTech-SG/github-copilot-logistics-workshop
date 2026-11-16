@@ -19,7 +19,7 @@
 - [ ] T007 [US1] 在services/dashboard.py复用MCP调用，等待完成并校验指标与范围，对应FR-001、FR-006、FR-007。
 - [ ] T008 [US1] 在static/index.html、static/app.js和static/style.css实现四个指标、筛选与承运商对比图，对应FR-005。
 - [ ] T009 [US1] 在static/app.js补加载、空结果、错误和重试反馈，核对凭据不进入页面，对应FR-006、FR-007。
-- [ ] T010 [US1] 按quickstart.md运行离线检查并实际核对全部与CAR002，将证据记入docs/validation.md，对应FR-010。
+- [ ] T010 [US1] 按quickstart.md运行离线检查并实际核对全部与CAR002，将证据记入README.md 的验收清单，对应FR-010。
 
 ## Phase 4: User Story 2 - 趋势与分页 (Priority: P2)
 **Goal**: 课后添加日期趋势和20条一页的运输明细。
@@ -27,10 +27,10 @@
 - [ ] T011 [US2] 在services/queries.py扩展按shipment_date聚合和分页查询，对应FR-008。
 - [ ] T012 [US2] 在services/dashboard.py补齐自然日并验证趋势、汇总、明细一致，对应FR-008、FR-009。
 - [ ] T013 [US2] 在static/app.js实现趋势、明细分页、筛选复位和时间标注，对应FR-008、FR-009。
-- [ ] T014 [US2] 在tests/test_dashboard.py补分页边界和趋势合计检查，在docs/validation.md记录实际验证。
+- [ ] T014 [US2] 在tests/test_dashboard.py补分页边界和趋势合计检查，在README.md 的验收清单记录实际验证。
 
 ## Phase 5: Polish & Cross-cutting
-- [ ] T015 核对README.md、AGENTS.md与活动规格入口一致；运行本项目检查后更新docs/validation.md。
+- [ ] T015 核对README.md、AGENTS.md与活动规格入口一致；运行本项目检查后更新README.md 的验收清单。
 
 ## Dependencies & Execution Order
 Phase 1、2先核对，P1按T005到T010执行。P2仅在学员或讲师明确安排时开始。T015在本次范围结束后执行。

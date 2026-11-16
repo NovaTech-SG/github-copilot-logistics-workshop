@@ -27,6 +27,6 @@ uv run --locked python app.py
 
 ## 验收
 
-按 [业务规格](spec.md) 和 [验收规则](acceptance.md) 核对本次范围。离线检查按 README 执行，实际 MCP 查询与页面操作分别记录到 [验证记录](../../docs/validation.md)。
+按 [业务规格](spec.md) 和 [验收规则](acceptance.md) 核对本次范围。离线检查按 README 执行，按 [README 验收](<../../README.md#7-验收>) 分别执行 MCP 查询与页面操作，并在课堂笔记或 PR 中记录结果。
 
-完整聊天步骤见 [Spec Kit 操作说明](../../docs/speckit.md) 和 [提示词](../../docs/prompts.md)。
+完整聊天步骤见 [README 复盘步骤](<../../README.md#6-spec-kit-复盘>) 和 [提示词](../../docs/prompts.md)。

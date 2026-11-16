@@ -36,11 +36,12 @@
 
 ## 本项目文档怎么读
 
-- 先按本 README 完成环境、个人授权和运行步骤。
-- 跟练或复盘时看 [Spec Kit 操作说明](docs/speckit.md) 与 [聊天提示词](docs/prompts.md)。
-- 业务含义与计算口径看 [规格入口](docs/spec.md)，具体步骤看 [任务入口](docs/tasks.md)。
-- 用 [验证记录模板](docs/validation.md) 记录自己实际执行的检查与结果。
-- `AGENTS.md`、`.github/` 和 `.specify/` 中的技能、规则与模板用于维持项目操作约定，保留原位置。
+`docs/` 只保留两份：
+
+- [data-source.md](docs/data-source.md)：Databricks MCP、三张业务表、关联字段及数据使用规则。
+- [prompts.md](docs/prompts.md)：按顺序发送到 Copilot 的 Spec Kit 提示词。
+
+环境配置、启动、调试和验收均看本 README。功能规格、计划和任务以本项目 `specs/` 中的实际产物为准。
 
 ## 目录
 
@@ -346,7 +347,7 @@ SDD（Specification-Driven Development，规格驱动开发）先把需求、边
 | [plan.md](specs/001-exception-followup/plan.md) | 怎样实现、沿用哪些组件 |
 | [tasks.md](specs/001-exception-followup/tasks.md) | 按依赖推进的任务与课堂范围 |
 | [完整课堂提示词](docs/prompts.md) | 可逐条复制到 Copilot 的技能调用 |
-| [Spec Kit 操作说明](docs/speckit.md) | 版本、检查点及课前准备说明 |
+| [README 课堂步骤](<README.md#6-spec-kit-跟练>) | 版本、检查点及课前准备说明 |
 
 这些规格、计划和任务是课前准备的检查点，不是已执行成功的 Copilot 对话记录。学员不需要在 15 分钟内从零重建全部材料。
 
@@ -394,7 +395,7 @@ node --check static/app.js
 > [!WARNING]
 > 起始版在第 2 步会提示保存练习未完成；先完成 Spec Kit P1 实现再继续验收，**不要**通过修改界面提示来绕过保存。
 
-把实际执行、结果和未验证项写入 [docs/validation.md](docs/validation.md)。详细场景见 [acceptance.md](specs/001-exception-followup/acceptance.md)。`ready`、离线测试通过、MCP 成功和页面验收是不同证据，分别记录。
+按上面的清单核对，在本次课堂笔记或 PR 说明中记录实际执行、结果和未验证项。详细场景见 [acceptance.md](specs/001-exception-followup/acceptance.md)。`ready`、离线测试通过、MCP 成功和页面验收是不同证据，分别记录。
 
 ### 7.3 提交前更新课堂检查点
 
@@ -455,7 +456,6 @@ uv run --locked python tools/check_training.py
 | `services/store.py` | 本地 SQLite 持久化（**`save` 待实现**） |
 | `static/` | 原生 HTML/CSS/JavaScript（**submit 待实现**） |
 | `specs/001-exception-followup/` | 当前功能的规格、计划、任务、数据模型与验收 |
-| `docs/spec.md` / `docs/tasks.md` | 指向当前功能文件的兼容入口 |
 | `data/followups.sqlite3` | 本机跟进记录，不提交 |
 | `tools/bootstrap_training.py` / `tools/check_training.py` | 首次克隆准备与课堂结构检查 |
 
