@@ -15,11 +15,12 @@
   ],
   "configurations": [
     {
-      // 默认：Host / Token / Catalog 全部从项目根目录的 .env 读取，F5 不再弹输入框。
-      // .env 已被 .gitignore 忽略；没有这个文件时用下面“提示输入”那份配置。
-      "name": "看板：启动网页（读 .env，127.0.0.1:8767）",
+      // F5 固定使用当前项目 .venv；继承 VS Code 的环境变量，.env 中同名值优先。
+      // 使用用户环境变量时，不要在 .env 留空 Token 或示例 Host。
+      "name": "看板：启动网页（.env 或用户环境变量，8767）",
       "type": "debugpy",
       "request": "launch",
+      "python": "${workspaceFolder}/.venv/Scripts/python.exe",
       "program": "${workspaceFolder}/app.py",
       "args": ["--port", "8767"],
       "cwd": "${workspaceFolder}",
@@ -30,9 +31,10 @@
     },
     {
       // 学员版只验证 MCP 连接（SELECT 1），不跑 Dashboard 业务查询；业务查询由练习题实现。
-      "name": "看板：检查连接（读 .env，--check）",
+      "name": "看板：检查连接（.env 或用户环境变量，--check）",
       "type": "debugpy",
       "request": "launch",
+      "python": "${workspaceFolder}/.venv/Scripts/python.exe",
       "program": "${workspaceFolder}/app.py",
       "args": ["--check"],
       "cwd": "${workspaceFolder}",
@@ -46,6 +48,7 @@
       "name": "看板：启动网页（提示输入 Host + Token）",
       "type": "debugpy",
       "request": "launch",
+      "python": "${workspaceFolder}/.venv/Scripts/python.exe",
       "program": "${workspaceFolder}/app.py",
       "args": ["--port", "8767"],
       "cwd": "${workspaceFolder}",

@@ -5,33 +5,17 @@
 先看 [数据来源与表关系](docs/data-source.md) 和 [需求提示词](docs/prompts.md)。本项目独立运行，端口 8769；所有业务数据为培训模拟数据。
 
 
-## 1 准备环境与依赖
+## 1 安装依赖
 
 使用 Windows PowerShell，准备 Git、VS Code 与可用的 Copilot Agent、uv、Node.js 22。Python 3.12 由 uv 安装，前端无需 npm install；账号与组织策略需允许 MCP 和 Skills。
 
-第一次获取代码时：
+下载或克隆仓库后，在 VS Code 中只打开 `copilot-shipment-tracker-starter`，在该目录的终端执行：
 
 ```powershell
-git clone https://github.com/NovaTech-SG/github-copilot-logistics-workshop.git
-cd github-copilot-logistics-workshop/copilot-shipment-tracker-starter
+uv sync
 ```
 
-已经克隆或下载 ZIP 时，直接进入本项目目录。后续所有命令都在这里执行：
-
-```powershell
-uv python install 3.12
-uv sync --locked --python 3.12
-uv run --locked python tools/bootstrap_training.py
-uv run --locked python tools/check_training.py
-```
-
-初始 bootstrap 输出 `awaiting_specification`，检查输出 `ready` 和 `stage: requirements`。不会生成预写规格。有有效选择时保留；新克隆只有一份已写好的 spec 时，仅恢复本机活动指针，输出 `restored_selection`；多份未选择时提示人工选择，不猜测。
-
-已预装官方 Spec Kit 1.3.2 的 Copilot Skills 和模板，不用安装全局 specify 或重新 init。若需检查工具文件：
-
-```powershell
-.\tools\speckit.ps1 integration status --json
-```
+项目已包含 `.python-version`（3.12）、`pyproject.toml` 和 `uv.lock`，uv 会自动准备 Python、创建本项目 `.venv` 并安装依赖。Spec Kit Skills 与模板也已提供；首次使用无需运行 bootstrap 或重新 init。后续命令均在当前 starter 目录执行。
 
 ## 2 配置并验证两条 MCP 连接
 
@@ -84,6 +68,15 @@ uv run --locked python app.py
 
 Copilot 连接用于开发时了解数据，Python 连接供应用运行；两条连接分别验证。浏览器只访问本地 Python，不持有 Token，也不使用聊天结果代替运行时查询。
 
+### 在 VS Code 中按 F5 调试
+
+1. 完成第 1 节的 `uv sync`，按工作区推荐安装或启用 **Python** 和 **Python Debugger** 扩展；调试配置固定使用本项目 `.venv`。
+2. 使用 VS Code 已继承的用户环境变量，或复制 `.env.example` 为本机 `.env` 后填写。`.env` 同名值优先，空 Token 或示例 Host 会覆盖已有配置；只使用用户变量时删掉或注释这些行。
+3. 按 `Ctrl+Shift+D` 打开“运行和调试”，选择“异常跟进：启动网页”，按 `F5`，访问 <http://127.0.0.1:8769>。选择“检查数据”则只查询异常与本机记录，不调用保存方法。
+4. 按 `F9` 设置断点，`Shift+F5` 停止。修改 Python 后重新启动；也可用 `Ctrl+F5` 运行而不调试。
+
+`.vscode/launch.json` 已提供，无需重新生成。`.env` 由此调试配置注入，普通终端启动不会自动读取，也不配置 Copilot MCP；编辑器的 Run Python File 不使用这份启动配置。新练习可在启动配置的 `args` 中追加 `"--db", "data/practice-02.sqlite3"`，重启验收保持同一文件。
+
 
 ## 3 用 Spec Kit 跟练
 
@@ -132,13 +125,26 @@ node --check static/app.js
 ## 按需调试与排错
 
 <details>
-<summary>F5 调试、复用已有配置和启动参数</summary>
+<summary>检查 Spec Kit 或恢复已有规格（可选）</summary>
+
+核对预装工具状态：
 
 ```powershell
-Copy-Item .env.example .env
+.\tools\speckit.ps1 integration status --json
 ```
 
-填写自己的值后，用 `.vscode/launch.json` 的 F5 配置启动；Python 修改后停止再启动。`.env` 只由 F5 注入，普通终端启动不会读取它，也不会配置 Copilot MCP。空的 `DATABRICKS_TOKEN=` 会覆盖已有变量，不使用时注释掉该行。编辑器的 Run Python File 不使用 launch.json。
+重新下载已有学习成果，且只有一份 spec、缺少活动选择时，可恢复本机指针：
+
+```powershell
+uv run python tools/bootstrap_training.py
+```
+
+初始空 `specs/` 无需执行此步骤；bootstrap 不生成规格，已有有效选择会保留，多份未选择时需人工选择。结构检查与测试见第 4 节。
+
+</details>
+
+<details>
+<summary>复用已有 MCP 配置和启动参数</summary>
 
 应用可显式读取已有的工作区 MCP 配置：
 
