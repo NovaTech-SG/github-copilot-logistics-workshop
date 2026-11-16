@@ -1,0 +1,7 @@
+---
+description: Dashboard 课堂迁移对照的项目边界
+alwaysApply: true
+---
+遵守本项目 AGENTS.md 和 .specify/memory/constitution.md。
+本目录用于完成版只读复盘和编辑器迁移对照；没有明确业务变更请求时不修改实现。
+业务数据只经 Databricks 只读 MCP 获取，凭据只供后端使用。

@@ -1,0 +1,58 @@
+"""Validate the training Spec Kit checkpoint without reading credentials or querying data."""
+from pathlib import Path
+import json
+import re
+import hashlib
+
+
+def main():
+    root = Path(__file__).resolve().parents[1]
+    config = json.loads((root / ".specify/training.json").read_text(encoding="utf-8-sig"))
+    if not (root / ".specify/feature.json").exists():
+        raise SystemExit("Run: uv run --locked python tools/bootstrap_training.py")
+    active = json.loads((root / ".specify/feature.json").read_text(encoding="utf-8-sig"))
+    integration = json.loads((root / ".specify/integration.json").read_text(encoding="utf-8-sig"))
+    assert integration["version"] == config["specify_cli_version"] == "1.3.2"
+    assert integration["default_integration"] == config["integration"] == "cursor-agent"
+    assert active["feature_directory"] == config["feature_directory"]
+    feature = (root / active["feature_directory"]).resolve()
+    assert feature.is_relative_to(root), "Active feature must stay in the current project"
+    for name in ("spec.md", "plan.md", "tasks.md", "research.md", "data-model.md", "quickstart.md", "contracts/api.md", "checklists/requirements.md"):
+        assert (feature / name).is_file(), name
+    spec = (feature / "spec.md").read_text(encoding="utf-8")
+    for heading in ("## User Scenarios & Testing", "## Requirements", "## Success Criteria", "## Assumptions"):
+        assert heading in spec, heading
+    assert "NEEDS CLARIFICATION" not in spec
+    required = ("constitution", "specify", "clarify", "plan", "tasks", "implement", "analyze", "converge")
+    for name in required:
+        skill = root / f".cursor/skills/speckit-{name}/SKILL.md"
+        text = skill.read_text(encoding="utf-8")
+        assert 'author: "github-spec-kit"' in text, name
+    for guide in ("data-source.md", "prompts.md"):
+        assert (root / "docs" / guide).is_file(), guide
+    tasks = (feature / "tasks.md").read_text(encoding="utf-8")
+    lines = [line for line in tasks.splitlines() if re.match(r"- \[[ xX]\] T\d+", line)]
+    assert len(lines) >= 10, "Missing executable tasks"
+    ids = [re.search(r"T\d+", line).group() for line in lines]
+    assert len(ids) == len(set(ids))
+    for n, ident in enumerate(ids, 1):
+        assert ident == f"T{n:03d}", "Task IDs must be sequential"
+    checklist = (feature / "checklists/requirements.md").read_text(encoding="utf-8")
+    assert "- [ ]" not in checklist, "Spec quality checklist needs review"
+    if config["checkpoint"] == "learner-start":
+        if config["feature_directory"].endswith("carrier-dashboard"):
+            assert "raise NotImplementedError" in (root / "services/dashboard.py").read_text(encoding="utf-8")
+        else:
+            assert "raise NotImplementedError" in (root / "services/store.py").read_text(encoding="utf-8")
+    baseline = json.loads((root / ".specify/migration-baseline.json").read_text(encoding="utf-8"))
+    for relative, expected in baseline["files"].items():
+        content = (root / relative).read_bytes().replace(b"\r\n", b"\n")
+        assert hashlib.sha256(content).hexdigest() == expected, relative
+    mcp = json.loads((root / ".cursor/mcp.example.json").read_text(encoding="utf-8"))
+    assert mcp["mcpServers"]["databricksTraining"]["url"] == "${env:DATABRICKS_HOST}/api/2.0/mcp/sql"
+    assert mcp["mcpServers"]["databricksTraining"]["headers"]["Authorization"] == "Bearer ${env:DATABRICKS_TOKEN}"
+    print(json.dumps({"status": "ready", "specify_cli_version": integration["version"], "feature": active["feature_directory"], "checkpoint": config["checkpoint"], "tasks": len(lines), "live_mcp_checked": False, "cursor_chat_executed": False}, ensure_ascii=False))
+
+
+if __name__ == "__main__":
+    main()

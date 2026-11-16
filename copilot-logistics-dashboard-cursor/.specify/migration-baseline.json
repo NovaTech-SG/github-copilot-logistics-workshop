@@ -1,0 +1,22 @@
+{
+  "source_project": "copilot-logistics-dashboard",
+  "source_commit": "b7a0d030bbc54c411c2834a7d9be8d9fcbccd234",
+  "files": {
+    ".python-version": "7b55f8e67b5623c4bef3fa691288da9437d79d3aba156de48d481db32ac7d16d",
+    "app.py": "bb108ede2efb7bed6c6d82eb9f797c30f15c9aa31de55158d28bcd9cafa1042f",
+    "pyproject.toml": "d967cd010c854d8adc5b8f819b90a056a5546b31741c4dc163dbe36377a4ad3e",
+    "services/__init__.py": "2057022262a8ff2c9d46a15f0b67b1b5574ca589f0e9d3f47a05888777dcf0b1",
+    "services/dashboard.py": "fd4649f3f60fec8060ca24d88e1c7a5908dcab7685cc0ef51d0880d49ed65119",
+    "services/mcp_sql.py": "6aa06837fc76de2716ee889a763e78a3579cd2ae8f4649ec9bf5196fa401d457",
+    "services/queries.py": "374f5987acf60c0b2d637e90897bbe1a6a6d7bd4604fd210d5bf3c179675f87f",
+    "services/settings.py": "e6dfae0e3f8d710f2d2b49b3562e479f7a0279e907b15e63cc1b83533528487b",
+    "specs/001-carrier-dashboard/acceptance.md": "03323cfba26164ae204eda062c796ed3d8f1e922a41f7727a0bfa1b42a9e602f",
+    "specs/001-carrier-dashboard/spec.md": "7706b996ae89d20bb1f4f036c7515a78d86548f0353bf814e2e14277034254e0",
+    "static/app.js": "52c2bb0176ebbb1605fa3cf233a9dfaadb1fda011e79fd4d91d4705c29c60dbd",
+    "static/index.html": "0bb5fcb6e02e9fd061dda40f09eae89120efe3ae6e984786114b752b2762dc2f",
+    "static/style.css": "dd8b502537d3c4f43524aac207923539070c33e48c24359959819f94e72779f0",
+    "tests/test_dashboard.py": "310179a4a82f85e95b17cca2eb795fdf282e059894522e568bc95e31a63ff03a",
+    "uv.lock": "9623655ce1131066cbeb7105d97b06a4138c4afb6faf0a7a05cc344bb684749e"
+  },
+  "line_endings": "normalized-lf"
+}

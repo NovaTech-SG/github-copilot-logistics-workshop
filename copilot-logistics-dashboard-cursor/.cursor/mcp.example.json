@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "databricksTraining": {
+      "url": "${env:DATABRICKS_HOST}/api/2.0/mcp/sql",
+      "headers": {
+        "Authorization": "Bearer ${env:DATABRICKS_TOKEN}"
+      }
+    }
+  }
+}

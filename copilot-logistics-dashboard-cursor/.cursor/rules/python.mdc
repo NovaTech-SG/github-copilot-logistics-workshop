@@ -1,0 +1,8 @@
+---
+description: Python 代码的课堂约定
+globs: "**/*.py"
+alwaysApply: false
+---
+复用现有 Databricks 只读 MCP、配置和校验模块，保持原生前端与独立 uv 环境。
+修改业务行为前核对活动 spec、plan 和 tasks；改动后运行对应离线测试。
+不输出或提交 Token，不以固定数据替代实际查询。
