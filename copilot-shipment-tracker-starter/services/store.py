@@ -60,7 +60,22 @@ class FollowUpStore:
         return result
 
     def save(self, source, status, note, expected_status):
-        # TODO：在事务中读取当前本机/源状态，核对expected_status，复用validate_change。
-        # TODO：以exception_id为键参数化写入SQLite，保存UTC时间，再重新读取返回。
-        # 仅写本机；不要通过MCP回写源表。失败时不能留下部分写入。
-        raise NotImplementedError("课堂练习：请完成跟进记录的本机保存方法。")
+        if expected_status not in STATES:
+            raise ValueError("请提供有效的原状态。")
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            local = db.execute("SELECT handling_status FROM followups WHERE exception_id = ?",
+                               (source['exception_id'],)).fetchone()
+            current = local['handling_status'] if local else source['handling_status']
+            if current != expected_status:
+                raise ConflictError("处理状态已变化，请重新读取后再保存。")
+            clean_note = validate_change(current, status, note)
+            db.execute("""INSERT INTO followups
+                (exception_id, handling_status, follow_up_note, updated_at)
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT(exception_id) DO UPDATE SET
+                    handling_status = excluded.handling_status,
+                    follow_up_note = excluded.follow_up_note,
+                    updated_at = excluded.updated_at""",
+                (source['exception_id'], status, clean_note, datetime.now(timezone.utc).isoformat()))
+        return self.overlay([source])[0]

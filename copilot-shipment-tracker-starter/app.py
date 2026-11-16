@@ -97,7 +97,7 @@ def main():
     except (ValueError, DataError, OSError, sqlite3.Error) as error:
         parser.exit(1, f'启动失败：{error}\n')
     server = ThreadingHTTPServer(('127.0.0.1', args.port), make_handler(tracker))
-    print(f'异常跟进学员项目：http://127.0.0.1:{args.port} · 保存功能待完成', flush=True)
+    print(f'异常跟进学员项目：http://127.0.0.1:{args.port} · 本机保存与重读确认', flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:

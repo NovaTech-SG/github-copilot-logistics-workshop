@@ -1,6 +1,6 @@
 # 运输异常跟进 学员起始项目
 
-在已有异常队列上新增本机 SQLite 保存和前端重读确认。列表、搜索筛选、分页、详情与源查询已提供。
+已在既有异常队列上实现本机 SQLite 保存和前端重读确认。列表、搜索筛选、分页、详情与只读源查询沿用原有流程。本次实现与验收记录见 [quickstart](specs/001-save-exception-followup/quickstart.md)。
 
 先看 [数据来源与表关系](docs/data-source.md) 和 [需求提示词](docs/prompts.md)。本项目独立运行，端口 8769；所有业务数据为培训模拟数据。
 
@@ -64,7 +64,7 @@ uv run --locked python app.py
 
 状态与备注只存当前项目 `data/followups.sqlite3`，按 `exception_id` 区分，不回写 Databricks。新练习可加 `--db data/practice-02.sqlite3` 使用尚不存在的文件；重启验证必须使用同一文件，不删除旧记录。源查询超出 500 条或截断时会报错。
 
-起始版可读列表和详情；保存按钮提示练习未完成，保存 API 返回 501，属于正常起点。
+当前版本可读取列表和详情，并按异常编号保存本机状态与备注。页面在 POST 后重新 GET 同一异常，状态与备注匹配后才显示成功；提交已成功但重读失败时显示尚未确认，可重新读取核对。
 
 Copilot 连接用于开发时了解数据，Python 连接供应用运行；两条连接分别验证。浏览器只访问本地 Python，不持有 Token，也不使用聊天结果代替运行时查询。
 
@@ -94,7 +94,7 @@ Copilot 连接用于开发时了解数据，Python 连接供应用运行；两�
 
 这些是聊天技能，不是终端命令。每步审阅后继续，目录与任务 ID 以实际生成结果为准。初始没有 spec/plan/tasks，由课堂逐步生成；不读取相邻完成版答案。
 
-课堂 15 分钟只补 `FollowUpStore.save`、前端 submit 和必要测试。保留已有队列、搜索筛选、分页、详情、源查询、校验和 SQLite 结构。效果稿只展示目标，不参与查询或保存。
+本次主要补齐 `FollowUpStore.save`、前端 submit、未确认后的手动重读及必要测试；为区分源更新时间与本机保存时间，查询只增补一个源时间字段。保留已有队列、搜索筛选、分页、详情、校验、SQLite 结构和 MCP 读取链路。效果稿只展示目标，不参与查询或保存。
 
 ## 4 验收
 
@@ -105,9 +105,10 @@ uv run --locked python tools/check_training.py
 uv run --locked python -m unittest discover -s tests -v
 uv run --locked python -m compileall -q app.py services tools
 node --check static/app.js
+node --test tests\test_followup_submit.js
 ```
 
-起始测试覆盖已有输入校验和 SDD 阶段；实施时补保存、重读、非法输入、过期状态与失败不写入的测试。`ready` 不表示保存功能已完成。
+测试覆盖已有输入校验与 SDD 阶段，以及本机保存、HTTP 重读、非法输入、过期状态、事务回滚、同库重开恢复与前端确认分支。`ready` 仅表示结构检查通过，不等于实时 MCP、页面或服务重启验收通过。
 
 使用实际 MCP 和页面核对：
 
@@ -119,7 +120,7 @@ node --check static/app.js
 
 状态按 OPEN → IN_PROGRESS → RESOLVED 推进，可同状态补备注；备注去首尾空格后必填且最多 1000 字。这些是教学规则，不代表 Nike 生产流程。
 
-起始版保存尚未实现，先完成第 3 节再验收持久化。记录实际执行和未验证项；提交前检查 `git diff -- .`。根目录 CI 仅离线检查，不连接 Databricks、不部署。
+保存已实现，按上述步骤验收当前本机环境，并记录实际执行和未验证项。提交前检查 `git diff -- .`。根目录 CI 仅离线检查，不连接 Databricks、不部署；不自动提交或推送。
 
 
 ## 按需调试与排错
