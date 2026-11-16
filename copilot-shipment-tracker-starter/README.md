@@ -39,7 +39,7 @@
 `docs/` 只保留两份：
 
 - [data-source.md](docs/data-source.md)：Databricks MCP、三张业务表、关联字段及数据使用规则。
-- [prompts.md](docs/prompts.md)：按顺序发送到 Copilot 的 Spec Kit 提示词。
+- [prompts.md](docs/prompts.md)：一条可复制的新增功能需求，后续操作按第 6 节推进。
 
 环境配置、启动、调试和验收均看本 README。功能规格、计划和任务以本项目 `specs/` 中的实际产物为准。
 
@@ -339,7 +339,7 @@ uv run --locked python app.py --db data/practice-02.sqlite3
 
 ## 6. Spec Kit 跟练
 
-先看 [数据来源与表关系](docs/data-source.md)、[新增功能效果稿](mockup/index.html) 和 [分步提示词](docs/prompts.md)。这次是在已有队列上新增本机保存，不重写应用。
+先看 [数据来源与表关系](docs/data-source.md)、[新增功能效果稿](mockup/index.html) 和 [一句话需求](docs/prompts.md)。这次是在已有队列上新增本机保存，不重写应用。
 
 | 步骤 | Copilot Agent 聊天操作 | 本步核对 |
 |---|---|---|
@@ -347,8 +347,8 @@ uv run --locked python app.py --db data/practice-02.sqlite3
 | 2 | 必要时 `/speckit-clarify` | 状态、备注、原状态过期与重读确认 |
 | 3 | `/speckit-plan` | 复用读取基础，确定保存与前端确认方案 |
 | 4 | `/speckit-tasks`、`/speckit-analyze` | 任务依赖、必要测试和一致性 |
-| 5 | 第一轮 `/speckit-implement` | 后端 save、校验与事务保存 |
-| 6 | 第二轮 `/speckit-implement` | 前端 POST 后 GET 核对与反馈 |
+| 5 | `/speckit-implement 只实现后端保存与必要测试` | 后端 save、校验与事务保存 |
+| 6 | `/speckit-implement 只实现前端提交与确认` | 前端 POST 后 GET 核对与反馈 |
 | 7 | `/speckit-converge` | 保存、恢复和失败场景，确认已有功能无回归 |
 
 命令逐条发到聊天，每步审阅后再继续。初始没有 spec/plan/tasks；功能目录和活动指针由官方 specify 技能创建，后续以实际生成的任务 ID 为准。
