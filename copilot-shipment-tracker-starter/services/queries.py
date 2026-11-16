@@ -13,6 +13,7 @@ def build_query(prefix, exception_id=None):
     return f"""WITH records AS (
  SELECT e.exception_id,e.shipment_id,e.exception_type,e.handling_status,
    e.follow_up_note,e.assigned_team,unix_timestamp(e.detected_at) AS detected_epoch,
+   unix_timestamp(e.updated_at) AS source_updated_epoch,
    s.carrier_id,c.carrier_name,s.origin_city,s.destination_city
  FROM {prefix}.exceptions e
  LEFT JOIN {prefix}.shipments s ON e.shipment_id=s.shipment_id
@@ -24,6 +25,7 @@ SELECT to_json(named_struct(
  'rows',(SELECT array_sort(collect_list(named_struct(
    'exception_id',exception_id,'shipment_id',shipment_id,'exception_type',exception_type,
    'handling_status',handling_status,'follow_up_note',follow_up_note,'assigned_team',assigned_team,
-   'detected_epoch',detected_epoch,'carrier_id',carrier_id,'carrier_name',carrier_name,
+   'detected_epoch',detected_epoch,'source_updated_epoch',source_updated_epoch,
+   'carrier_id',carrier_id,'carrier_name',carrier_name,
    'origin_city',origin_city,'destination_city',destination_city))) FROM limited)
 ),map('ignoreNullFields','false')) AS tracker_json"""
