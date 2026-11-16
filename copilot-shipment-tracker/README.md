@@ -1,8 +1,8 @@
 # copilot-shipment-tracker
 
-运输异常跟进 · 讲师完成版，用于 Nike GC Logistics 的 GitHub Copilot Session 2。全部业务数据为培训模拟数据，不代表 Nike 实际运营情况。
+运输异常跟进 · 参考完成版，用于 Nike GC Logistics 的 GitHub Copilot Session 2。全部业务数据为培训模拟数据，不代表 Nike 实际运营情况。
 
-**本仓库用于先看效果、讲师演示和课后复盘。** 学员编码请打开同一工作坊下的 `copilot-shipment-tracker-starter`；课件中的 `shipment-tracker` 是本案例简称。
+**本目录用于查看完成效果和课后复盘。** 学员编码请打开同一工作坊下的 `copilot-shipment-tracker-starter`；课件中的 `shipment-tracker` 是本案例简称。
 
 > [!IMPORTANT]
 > 这是完成版，直接运行即可，**不要**再执行 `/speckit-implement` 改写业务。规格、计划与任务留作复盘材料。
@@ -12,7 +12,7 @@
 | 项 | 内容 |
 |---|---|
 | 课程 | GitHub Copilot Session 2 · Nike GC Logistics |
-| 角色 | 讲师完成版（学员版：`copilot-shipment-tracker-starter`） |
+| 角色 | 参考完成版（学员版：`copilot-shipment-tracker-starter`） |
 | 预计用时 | 课前准备约 30 分钟；课堂 15 分钟 |
 | 默认地址 | <http://127.0.0.1:8768> |
 | 数据来源 | Databricks SQL MCP 读取源异常；状态与备注只写本机 SQLite |
@@ -31,6 +31,14 @@
 - [ ] 保存后从服务端重新读取并确认，失败时不能显示成功
 - [ ] 区分“源状态”和“本机跟进状态”，重启后仍能核对
 - [ ] 用离线检查、MCP 实测、页面操作三类证据记录验收结果
+
+## 本项目文档怎么读
+
+- 先按本 README 完成环境、个人授权和运行步骤。
+- 跟练或复盘时看 [Spec Kit 操作说明](docs/speckit.md) 与 [聊天提示词](docs/prompts.md)。
+- 业务含义与计算口径看 [规格入口](docs/spec.md)，具体步骤看 [任务入口](docs/tasks.md)。
+- 用 [验证记录模板](docs/validation.md) 记录自己实际执行的检查与结果。
+- `AGENTS.md`、`.github/` 和 `.specify/` 中的技能、规则与模板用于维持项目操作约定，保留原位置。
 
 ## 目录
 

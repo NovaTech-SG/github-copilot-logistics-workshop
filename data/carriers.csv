@@ -1,0 +1,5 @@
+﻿carrier_id,carrier_name,service_region,is_active
+CAR001,模拟承运商A,大中华区模拟线路,True
+CAR002,模拟承运商B,大中华区模拟线路,True
+CAR003,模拟承运商C,大中华区模拟线路,True
+CAR004,模拟承运商D,大中华区模拟线路,True

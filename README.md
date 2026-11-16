@@ -4,10 +4,39 @@ Nike GC Logistics · Session 2 · 90 分钟
 
 [![Workshop CI](https://github.com/NovaTech-SG/github-copilot-logistics-workshop/actions/workflows/ci.yml/badge.svg)](https://github.com/NovaTech-SG/github-copilot-logistics-workshop/actions/workflows/ci.yml)
 
-本仓库包含学员起始项目、讲师完成版和跟练文档。通过 SDD / Spec Kit、项目指令和 Databricks MCP，完成 Dashboard 与运输异常跟进两个本地应用。
+本仓库包含学员起始项目、参考完成版、培训模拟 CSV 和跟练文档。通过 SDD / Spec Kit、项目指令和 Databricks MCP，完成 Dashboard 与运输异常跟进两个本地应用。
 
 > [!NOTE]
 > 全部业务数据为培训模拟数据，不代表 Nike 实际运营情况。仓库不包含实际 Token，也不自动创建 Databricks 培训表。
+
+## 客户资料与下载
+
+客户版 Word 直接保存在仓库根目录，随代码一起克隆或下载 ZIP 即可取得，也可以从下面的链接单独下载。
+
+| 资料 | 用途 | 获取方式 |
+|---|---|---|
+| Session 2 培训大纲 | 了解培训对象、90 分钟安排、两个案例和课前准备 | [下载 Word](<Nike GC Logistics Session 2 培训大纲.docx?raw=true>) |
+| Databricks 三张表业务表说明 | 理解三张表的业务对象、主要字段和关联，通过简化示例与只读查询完成练习 | [下载 Word](<Databricks 三张表业务表说明.docx?raw=true>) |
+| Databricks 培训模拟数据 | 查看承运商、运输单和运输异常三份 CSV，理解源表或准备导入数据 | [文件说明与 CSV](data/README.md) |
+| Dashboard 学员操作说明 | 安装依赖、配置 MCP、运行调试和完成第一个案例 | [在线阅读](copilot-logistics-dashboard-starter/README.md) |
+| 异常跟进学员操作说明 | 运行第二个案例、保存状态与备注、重读核对 | [在线阅读](copilot-shipment-tracker-starter/README.md) |
+
+建议先读培训大纲和三张表业务表说明，再进入选定学员项目的 README。学习笔记包含关系图、主要字段、状态与准时率说明，以及不附答案的查询练习。跟练时查该项目 `docs/prompts.md`；核对业务规则时查 `specs/` 下的 `spec.md` 和 `acceptance.md`。
+
+Word 用于课程概览和数据理解；具体环境命令、功能范围和验收以当前项目 README 与活动规格为准。[data/](data/README.md) 中附有三份培训模拟 CSV，培训源表由讲师在 Databricks 中准备，个人授权由使用者自行配置。课程应用通过 Databricks MCP 读取源表。
+
+## Markdown 文档阅读顺序
+
+| 你现在要做什么 | 阅读位置 | 阅读重点 |
+|---|---|---|
+| 第一次开始 | 本页、选定学员项目的 `README.md` | 环境、个人授权、运行方式与当前练习起点 |
+| 理解课堂步骤 | 当前项目的 `docs/speckit.md`、`docs/prompts.md` | 逐步使用 Spec Kit，保持本次练习范围 |
+| 核对业务含义 | `specs/` 当前功能下的 `spec.md`、`acceptance.md`、`data-model.md` | 需求、数据字段、指标和状态规则 |
+| 理解实现方案 | 同一功能下的 `plan.md`、`tasks.md`、`research.md`、`contracts/api.md` | 技术选择、任务顺序和接口约定 |
+| 验证自己的结果 | 当前项目的 `docs/validation.md` | 填写自己的命令、结果及未验证项；模板不预填通过结论 |
+| 对照完成效果 | 两个参考完成版的 README | 运行和只读复盘；在 starter 中编码时不读取相邻完成版 |
+
+`AGENTS.md`、`.github/copilot-instructions.md`、`.specify/memory/constitution.md` 是项目和 Agent 的规则。`.github/skills/`、`.specify/templates/` 是已配置的 Spec Kit 技能和模板；保留这些文件才能按文档继续跟练。`THIRD_PARTY_NOTICES.md` 保留第三方来源与许可。普通阅读先从上表开始，不需要逐一阅读所有工具文件。
 
 ## 概览
 
@@ -43,9 +72,9 @@ Nike GC Logistics · Session 2 · 90 分钟
 | 目录 | 用途 | 端口 |
 |---|---|---:|
 | [copilot-logistics-dashboard-starter](copilot-logistics-dashboard-starter/README.md) | 学员跟练：Dashboard | 8767 |
-| [copilot-logistics-dashboard](copilot-logistics-dashboard/README.md) | 讲师展示：Dashboard 完成版 | 8766 |
+| [copilot-logistics-dashboard](copilot-logistics-dashboard/README.md) | 结果参考：Dashboard 完成版 | 8766 |
 | [copilot-shipment-tracker-starter](copilot-shipment-tracker-starter/README.md) | 学员跟练：异常保存与重读 | 8769 |
-| [copilot-shipment-tracker](copilot-shipment-tracker/README.md) | 讲师展示：异常跟进完成版 | 8768 |
+| [copilot-shipment-tracker](copilot-shipment-tracker/README.md) | 结果参考：异常跟进完成版 | 8768 |
 
 这是**一个 Git 仓库、四个独立应用目录**。每个案例有自己的依赖锁文件、环境、规格和指令。克隆一次即可；依赖安装、MCP 配置、Spec Kit 和启动命令都在选定案例目录内运行。
 
@@ -99,15 +128,15 @@ uv run --locked python tools/check_training.py
 > [!IMPORTANT]
 > 两个案例的 15 分钟范围只覆盖 P1。趋势、分页、扩展校验等属于 P2，完成版包含但课堂不要求照搬。
 
-## 讲师准备
+## 开始前的自查
 
-完成版用于展示和复盘，学员从两个 starter 目录跟练。课前在实际授课电脑上验证：
+在自己的电脑和账号下完成以下检查，再进入课堂跟练：
 
-- [ ] Copilot Skills 能被发现（`/` 能看到 `/speckit-*`）
-- [ ] `databricksTraining` 能启动并返回 3 个工具
-- [ ] 两个完成版的 `--check` 数值与文档一致
-- [ ] 页面筛选、保存、重读与重启恢复正常
-- [ ] 起始版的 501 / “课堂练习：请完成……”提示符合预期
+- Git、uv、Node.js 可用，VS Code 中的 Copilot Agent 已获授权。
+- 只打开当前学员项目，按该项目 README 安装依赖并运行 bootstrap 与课堂结构检查。
+- 在聊天斜杠菜单中确认本项目的 `/speckit-*` 技能可用。
+- 用自己的 Databricks 授权分别验证 Copilot MCP 和 Python 应用；成功连接后继续核对培训表权限。
+- 起始版的业务 TODO 和 501 提示是练习起点；实现后再按验收清单检查结果。
 
 ## 故障排查
 
@@ -131,9 +160,8 @@ starter 完成实现后，按其 README 更新课堂检查点，记录真实验�
 ## 参考
 
 - 案例文档：[Dashboard 完成版](copilot-logistics-dashboard/README.md) · [Dashboard 学员版](copilot-logistics-dashboard-starter/README.md) · [异常跟进完成版](copilot-shipment-tracker/README.md) · [异常跟进学员版](copilot-shipment-tracker-starter/README.md)
-- 仓库维护与发布：[GitHub发布说明](GitHub发布说明.md)
 - [uv 安装](https://docs.astral.sh/uv/getting-started/installation/)
 - [VS Code MCP 配置与首次工具验证](https://code.visualstudio.com/docs/agent-customization/mcp-servers)
 - [Spec Kit 的 Copilot Skills 集成](https://github.github.io/spec-kit/integrations/copilot.html)
 
-第三方 Spec Kit 材料的来源与许可见各案例目录的 `THIRD_PARTY_NOTICES.md`。PPT 在仓库外单独保存。
+第三方 Spec Kit 材料的来源与许可见各案例目录的 `THIRD_PARTY_NOTICES.md`。客户版 Word 保存在仓库根目录，可从本页的下载入口获取。

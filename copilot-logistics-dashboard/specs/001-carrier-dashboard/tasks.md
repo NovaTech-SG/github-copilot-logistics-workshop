@@ -9,7 +9,7 @@
 
 ## Phase 2: Foundational
 - [ ] T003 核对services/settings.py与services/mcp_sql.py已有只读连接，实际查询培训表；不修改读取凭据的边界。
-- [ ] T004 阅读contracts/api.md和docs/data-contract.md，核对services/mcp_sql.py解析需要的字段与类型。
+- [ ] T004 阅读contracts/api.md，核对services/mcp_sql.py解析需要的字段与类型。
 
 ## Phase 3: User Story 1 - 指标与承运商筛选 (Priority: P1)
 **Goal**: P1指标、筛选、清除和对比图可验证。

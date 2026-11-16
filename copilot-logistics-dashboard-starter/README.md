@@ -34,6 +34,14 @@
 - [ ] 查询失败时明确报错，不用固定值或聊天结果兜底
 - [ ] 完成 P1 后把 `.specify/training.json` 的 `checkpoint` 改为 `learner-implemented` 并记录真实验证结果
 
+## 本项目文档怎么读
+
+- 先按本 README 完成环境、个人授权和运行步骤。
+- 跟练或复盘时看 [Spec Kit 操作说明](docs/speckit.md) 与 [聊天提示词](docs/prompts.md)。
+- 业务含义与计算口径看 [规格入口](docs/spec.md)，具体步骤看 [任务入口](docs/tasks.md)。
+- 用 [验证记录模板](docs/validation.md) 记录自己实际执行的检查与结果。
+- `AGENTS.md`、`.github/` 和 `.specify/` 中的技能、规则与模板用于维持项目操作约定，保留原位置。
+
 ## 目录
 
 | 章节 | 内容 | 用时 |

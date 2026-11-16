@@ -1,7 +1,7 @@
 # Implementation Plan: 运输异常跟进
 
 **Branch**: `main` | **Date**: 2026-11-09 | **Spec**: [spec.md](spec.md)
-**Input**: 本功能spec.md和项目constitution；当前目录为讲师完成版。
+**Input**: 本功能spec.md和项目constitution；当前目录为参考完成版，用于方案与效果对照。
 
 ## Summary
 复用只读数据和校验，完成本机SQLite保存及前端提交后重新读取。
@@ -18,15 +18,15 @@
 **Scale/Scope**: 只完成save与submit及必要验证，不重构源读取。
 
 ## Constitution Check
-| 原则 | 实施约束 | 设计复核 |
-|---|---|---|
-| 规格先行 | FR对应任务与验收 | 通过：见tasks.md映射 |
-| 真实只读来源 | 复用execute_sql_read_only与轮询 | 通过：不引入写源表步骤 |
-| 凭据与状态隔离 | Token后端、只写本项目SQLite | 通过：边界不扩大 |
-| 小范围实现 | P1先行，必要测试 | 通过：不增加运行依赖 |
-| 教学检查点 | 起始未完成，完成版复盘 | 通过：不声称已在Copilot课堂执行 |
+| 项目原则 | 本方案的约束 |
+|---|---|
+| 规格先行 | 需求对应任务与验收，业务规则变化先更新规格。 |
+| 真实只读来源 | 复用只读 MCP 与轮询，不写 Databricks 源表。 |
+| 凭据与本地状态 | Token 仅后端使用；只保存本项目的 SQLite 跟进记录。 |
+| 小范围实现 | 先完成本次 P1，按需求补充必要验证。 |
+| 教学检查点 | 区分起始项目与参考完成版，按实际执行记录进度。 |
 
-以上为设计约束复核，不表示实时业务验收通过。
+这些约束需要在实现与验收时核对，具体结果填写到 docs/validation.md。
 
 ## Project Structure
 ```text

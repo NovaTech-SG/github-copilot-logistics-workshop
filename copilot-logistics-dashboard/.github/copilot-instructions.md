@@ -4,7 +4,7 @@ GitHub首次克隆后，如`.specify/feature.json`不存在，先运行`uv run -
 
 # Copilot 项目说明
 
-请遵守根目录 `AGENTS.md`。需求和验收口径见 `docs/spec.md`，讲师演示流程见 `docs/demo.md`。
+请遵守根目录 `AGENTS.md`。需求和验收口径见 `docs/spec.md`，只读复盘见 `docs/speckit.md` 和 `docs/prompts.md`，本次结果记录在 `docs/validation.md`。
 
 先说明计划，再做小范围改动。开发时可以用 `databricksTraining` 的只读工具检查表结构和结果；应用运行时仍必须由 Python 后端通过 MCP 查询，不要把聊天中的查询结果硬编码到页面。
 

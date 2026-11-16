@@ -1,6 +1,7 @@
 # Feature Specification: 物流承运商Dashboard
 
-**Feature Branch**: `main`（本次未创建分支，活动功能由.specify/feature.json选择）
+**Feature Branch**: `main`
+**Feature Directory**: `specs/001-carrier-dashboard`
 **Created**: 2026-11-09
 **Status**: Completed reference; validation reported separately
 **Input**: 物流同事希望按承运商查看运输表现，比较准时率，并筛选需要跟进的承运商。
@@ -70,4 +71,4 @@
 - Q: 在途、已取消或缺少实际到达时间的单量进入准时率分母吗？ → A: 不进入；规则以FR-002为准。
 - Q: 分母为零如何显示？ → A: N/A，表示不适用，不等同0%。
 - Q: 15分钟是否需要做完趋势和分页？ → A: P1先完成，P2留作课后扩展。
-以上答案来自已确认培训规格，非虚构的现场学员回答。
+这些问答说明本课已确定的业务规则；业务条件变化时先更新规格。

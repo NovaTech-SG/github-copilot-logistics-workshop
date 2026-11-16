@@ -1,6 +1,7 @@
 # Feature Specification: 运输异常状态与备注跟进
 
-**Feature Branch**: `main`（本次未创建分支，活动功能由.specify/feature.json选择）
+**Feature Branch**: `main`
+**Feature Directory**: `specs/001-exception-followup`
 **Created**: 2026-11-09
 **Status**: Completed reference; validation reported separately
 **Input**: 物流同事希望从异常队列找到待跟进记录，保存处理状态和备注，重新打开后仍能看到进度。
@@ -68,4 +69,4 @@
 - Q: 状态直接写回源数据吗？ → A: 不写回，源只读，跟进结果仅保存在本机。
 - Q: 已解决后能否重新打开？ → A: 本课不允许，可在同状态补充有效备注。
 - Q: 怎样证明保存成功？ → A: 保存后重新读取，并用同一存储位置重启复查。
-以上答案来自已确认培训规格，非现场自动收集的回答。
+这些问答说明本课已确定的业务规则；业务条件变化时先更新规格。

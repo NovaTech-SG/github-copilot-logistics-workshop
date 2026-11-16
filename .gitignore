@@ -6,6 +6,15 @@ __pycache__/
 .env.*
 !.env.example
 data/
+
+# Distribute only the workshop's three training CSVs and their guide.
+!/data/
+/data/*
+!/data/README.md
+!/data/carriers.csv
+!/data/shipments.csv
+!/data/exceptions.csv
+
 *.sqlite
 *.sqlite3
 *.sqlite3-shm
