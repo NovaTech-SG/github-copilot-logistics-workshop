@@ -1,6 +1,6 @@
 # 物流 Dashboard 学员起始项目
 
-从技术骨架和空规格开始，通过需求、mockup 与 Spec Kit 构建运输表现看板。
+本项目由技术骨架和空规格开始，通过需求、mockup 与 Spec Kit 构建运输表现看板。当前课堂已实现 P1 与 P2：四指标、承运商筛选与对比、状态反馈、每日趋势、20 条分页明细及时间说明。当前设计与任务见 [功能目录](specs/001-transport-performance-dashboard/plan.md)。
 
 先看 [数据来源与表关系](docs/data-source.md) 和 [需求提示词](docs/prompts.md)。本项目独立运行，端口 8767；所有业务数据为培训模拟数据。
 
@@ -60,7 +60,7 @@ uv run --locked python app.py --check
 uv run --locked python app.py
 ```
 
-`--check` 仅执行 SELECT 1，预期 `connection: OK`、`business_verified: false`，不证明业务表可读。打开 <http://127.0.0.1:8767> 可见起始页，业务 API 返回 501 是尚未实现的正常状态。
+`--check` 仅执行 SELECT 1，预期 `connection: OK`、`business_verified: false`，不证明业务表可读。启动后打开 <http://127.0.0.1:8767>，页面通过 `/api/dashboard` 查询真实业务数据。参数错误返回 400，源查询或结果校验失败返回 502；失败明确报错并允许重试，不使用固定样例兜底。
 
 Copilot 连接用于开发时了解数据，Python 连接供应用运行；两条连接分别验证。浏览器只访问本地 Python，不持有 Token，也不使用聊天结果代替运行时查询。
 
@@ -103,7 +103,19 @@ uv run --locked python -m compileall -q app.py services tools
 node --check static/app.js
 ```
 
-起始测试只验证课堂阶段和文件保护；实施时需要补本次指标、筛选与失败场景的业务测试。结构检查识别 `requirements → specified → planned → tasks-generated`，`ready` 不表示业务已完成。
+测试包含课堂阶段/文件保护，以及参数校验、HTTP 合同、MCP 编排、失败响应、指标不变量和分页数据校验。默认离线测试跳过需要明确启用的 5 项真实 SQL 测试。结构检查识别 `requirements → specified → planned → tasks-generated`，`ready` 不表示业务已完成。
+
+要验证生成 SQL 的真实业务语义，可在本机连接配置已就绪后显式启用只读测试。它们将构造的 `VALUES`/CTE 集合作为查询输入，不写入业务表，也不作为应用数据源：
+
+```powershell
+$env:DASHBOARD_LIVE_TESTS = '1'
+$env:DASHBOARD_VSCODE_CONFIG = '.vscode\mcp.json'
+uv run --locked python -m unittest discover -s tests -p 'test_queries.py' -v
+Remove-Item Env:DASHBOARD_LIVE_TESTS
+Remove-Item Env:DASHBOARD_VSCODE_CONFIG
+```
+
+这些测试覆盖恰好到达、有效分母、整体加权比例、重复承运商资料、未知名称、缺日补零、空范围以及 41 单的稳定分页；运行时仍只读取配置的 Databricks 业务源。详细步骤见 [验收指南](specs/001-transport-performance-dashboard/quickstart.md)。
 
 使用未变更的培训快照，通过实际 MCP 和页面核对：
 

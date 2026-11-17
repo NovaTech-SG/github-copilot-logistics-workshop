@@ -1,5 +1,42 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>物流 Dashboard · 起始项目</title><link rel="icon" href="data:,"><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
-<body><main><p class="label">SESSION 2 · 从需求开始</p><h1>物流 Dashboard · 起始项目</h1><p>本地服务骨架已启动。业务规格和看板功能由你在课堂中逐步生成。</p><section><h2>从这里开始</h2><ol><li>在编辑器中打开 docs/prompts.md，讨论和补充业务需求。</li><li>在浏览器单独打开 mockup/index.html，查看静态目标效果。</li><li>在 Copilot 中逐条调用 specify、需要时 clarify、plan 和 tasks。</li><li>审阅任务后分轮实现后端与前端 P1，再验收实际结果。</li></ol><p class="note">效果稿只用于视觉参考。业务完成后，本页面应通过 Python 后端读取 Databricks MCP 的实际结果。</p></section><p id="status" role="status"></p><footer>培训模拟数据 · 仅本地运行</footer></main></body>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>物流运营看板 · 运输表现</title><link rel="icon" href="data:,"><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<header><div class="brand"><span class="brand-mark" aria-hidden="true">↗</span><div>GC LOGISTICS<small>物流运营 · 培训演示</small></div></div><span class="synthetic">培训模拟数据 · 仅本地运行</span></header>
+<main id="main" tabindex="-1">
+  <div class="title-row"><div><p class="eyebrow">运输表现 / 运营分析</p><h1>物流运营看板</h1><p class="subtitle">从运输表现定位需要跟进的承运商</p></div><div class="source"><strong>Databricks MCP</strong><span>只读业务查询</span></div></div>
+  <section class="filters" aria-label="分析范围">
+    <div class="scope"><span class="dot" aria-hidden="true"></span><span>当前范围</span><strong id="scope">全部承运商</strong></div>
+    <div class="controls"><label for="carrier">承运商</label><select id="carrier"><option value="">全部承运商</option></select><button id="clear" type="button">清除筛选</button><button id="refresh" class="accent" type="button">重新查询</button></div>
+  </section>
+  <p id="status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+  <div id="loading"><span class="spinner" aria-hidden="true"></span><p>正在查询当前范围，请稍候…</p></div>
+  <section id="error" role="alert" hidden><h2 id="error-title">查询失败</h2><p id="error-message"></p><button id="retry" type="button">重试当前查询</button></section>
+  <div id="results" aria-busy="true" hidden>
+    <p id="empty" class="empty-notice" hidden>无记录：当前范围内没有运输单，可清除筛选查看全部承运商。</p>
+    <section class="metrics" aria-label="核心指标">
+      <article><span>运输单量</span><strong id="total-count">—</strong><small>当前范围内全部运输单</small></article>
+      <article><span>有效计算单量</span><strong id="eligible-count">—</strong><small>已送达且到达时间完整</small></article>
+      <article class="featured"><span>准时率</span><strong id="on-time-rate">—</strong><small id="rate-detail">准时量 / 有效计算单量</small></article>
+      <article><span>延误单量</span><strong id="delayed-count">—</strong><small>实际到达晚于计划</small></article>
+    </section>
+    <section class="method" aria-label="计算口径"><div><p><strong>准时率口径</strong>实际到达不晚于计划，等于计划也计为准时。</p><p>仅已送达且计划、实际到达时间完整的单据参与计算；在途、取消和缺失时间排除。整体按总准时量 ÷ 总有效量计算。</p></div><div class="method-counts"><span>准时 <b id="on-time-count">—</b></span><span aria-hidden="true">/</span><span>有效 <b id="method-eligible">—</b></span><span class="excluded">排除 <b id="excluded-count">—</b> 单</span></div></section>
+    <div class="charts">
+      <section class="panel" aria-labelledby="carrier-heading"><div class="panel-heading"><div><h2 id="carrier-heading">承运商准时率</h2><p>准时量 / 有效计算单量 · 无有效分母显示 N/A</p></div><span>单位：%</span></div><div id="carrier-chart"></div></section>
+      <section class="panel" aria-labelledby="trend-heading"><div class="panel-heading"><div><h2 id="trend-heading">每日运输单量</h2><p id="trend-description">按业务日期统计，缺失自然日补零</p></div><span>单位：单</span></div><div id="trend-chart"></div><details id="trend-values"><summary>查看每日单量数据</summary><div class="table-wrap" tabindex="0" role="region" aria-label="每日单量数据"><table><caption class="sr-only">每日运输单量</caption><thead><tr><th scope="col">业务日期</th><th scope="col">运输单量</th></tr></thead><tbody id="daily-body"></tbody></table></div></details></section>
+    </div>
+    <section class="panel details" aria-labelledby="details-heading"><div class="panel-heading"><div><h2 id="details-heading">运输明细</h2><p>按业务日期、运输单号升序 · 每页 20 单</p></div><span>时间：上海</span></div>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="运输明细，可横向滚动"><table><caption class="sr-only">当前范围运输明细，时间按 Asia/Shanghai 显示</caption><thead><tr><th scope="col">运输单号</th><th scope="col">承运商</th><th scope="col">业务日期</th><th scope="col">线路</th><th scope="col">计划到达</th><th scope="col">实际到达</th><th scope="col">运输结果</th></tr></thead><tbody id="shipments-body"></tbody></table></div>
+      <nav class="pagination" aria-label="运输明细分页"><span id="page-info"></span><div><button id="previous" type="button" disabled>上一页</button><button id="next" type="button" disabled>下一页</button></div></nav>
+    </section>
+    <div class="data-note"><span>源数据最新快照：<time id="snapshot">—</time></span><span>查询完成时间：<time id="queried">—</time></span></div>
+  </div>
+  <noscript><p class="empty-notice">请启用 JavaScript 以查询运输表现看板。</p></noscript>
+  <footer>教学指标口径 · 时区 Asia/Shanghai（上海） · 无有效分母时准时率显示 N/A</footer>
+</main>
+</body>
 </html>
